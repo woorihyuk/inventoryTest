@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using Script.Object;
+using Script.UI;
 using UnityEngine;
 
 namespace Script.Player
@@ -24,10 +27,10 @@ namespace Script.Player
         {
             if (_interactiveObjectChecker.TryGetLastInteractiveObject(out var obj))
             {
-                if (obj.objectType==InteractiveObjectType.Item)
+                if (obj.objectType==InteractiveObjectType.ItemBox)
                 {
-                    var item = obj.gameObject.GetComponent<Item>();
-                    item.Rooting();
+                    var itemBox = obj.gameObject.GetComponent<ItemBox>();
+                    itemBox.OpenBox();
                 }
             }
         }

@@ -4,16 +4,16 @@ using UnityEngine.InputSystem;
 
 namespace Script.Player
 {
-    public class PlayerInputManager : MonoBehaviour, Input.IPlayerActions
+    public class PlayerInputManager : MonoBehaviour, NewInput.IPlayerActions
     {
         private PlayerMove _playerMove;
         private PlayerAction _playerAction;
 
-        private Input _input;
+        private NewInput _input;
 
         private void Awake()
         {
-            _input = new Input();
+            _input = new NewInput();
             _input.Player.SetCallbacks(this);
             _input.Player.Enable();
             _playerMove = GetComponent<PlayerMove>();
