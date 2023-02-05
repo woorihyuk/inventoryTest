@@ -3,7 +3,7 @@ using UnityEngine;
 public enum InteractiveObjectType
 {
     None,
-    ItemBox,
+    Item,
     
 }
 public class InteractiveObject : MonoBehaviour
