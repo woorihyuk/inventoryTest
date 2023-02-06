@@ -18,14 +18,6 @@ namespace Script.UI
             Instance = this;
         }
 
-        private void Start()
-        {
-            for (int i = 0; i < inGameUi.Length; i++)
-            {
-                inGameUi[i].SetActive(false);
-            }
-        }
-
         public void InventoryOn(bool i)
         {
             Time.timeScale = i ? 0 : 1;
