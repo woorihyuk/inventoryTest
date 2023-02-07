@@ -21,7 +21,7 @@ namespace Script.Object
         {
             InGameUiManager.Instance.RootingMenuOn(true);
             print(Items.Instance);
-            if(opend)Items.Instance.AddItem("a");
+            if(opend)Items.Instance.AddItem("2X2", 0);
             opend = false;
         }
     }

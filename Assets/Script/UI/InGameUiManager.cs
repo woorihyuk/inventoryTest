@@ -9,8 +9,9 @@ namespace Script.UI
 
         public GameObject[] inGameUi;
         /*
-        inventory--0
-        rooting--1
+        background--0
+        inventory--1
+        rooting--2
         */
 
         private void Awake()
@@ -30,6 +31,7 @@ namespace Script.UI
         {
             Time.timeScale = i ? 0 : 1;
             inGameUi[0].SetActive(i);
+            inGameUi[1].SetActive(i);
         }
 
         public void RootingMenuOn(bool i)
@@ -37,6 +39,7 @@ namespace Script.UI
             Time.timeScale = i ? 0 : 1;
             inGameUi[0].SetActive(i);
             inGameUi[1].SetActive(i);
+            inGameUi[2].SetActive(i);
         }
     }
 }

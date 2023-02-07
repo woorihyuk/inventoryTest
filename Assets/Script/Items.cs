@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Script.UI;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 namespace Script
 {
@@ -10,14 +12,17 @@ namespace Script
     {
         public static Items Instance;
         public IObjectPool<GameObject> ItemPool;
-        public Canvas canvas;
         public GameObject item;
-        public Transform _inItemBox;
+        public Sprite[] itemSprite;
+        /*
+         0. 테스트용
+         */
+        public Transform inItemBox;
 
         private Dictionary<string, int> _findItemSize;
         private Sprite[] _itemImage;
 
-        private int[,] _itemSize;
+        private float[,] _itemSize;
         private int _cost;
 
         private void Awake()
@@ -41,22 +46,26 @@ namespace Script
                     Destroy(obj);
                 }, false, 10000);
 
-            _itemSize = new int[3, 2] { { 80, 80 }, { 80, 150 }, { 150, 150 } };
+            _itemSize = new float[3, 2] { { 100, 100 }, { 100, 200 }, { 200, 200 } };
             _findItemSize = new Dictionary<string, int>()
             {
-                {"a", 0},
-                {"b", 1}
+                {"1X1", 0},
+                {"1X2", 1},
+                {"2X2", 2}
             };
         }
 
-        public void AddItem(string itemName)
+        public void AddItem(string itemSize, int itemType)
         {
             GameObject iobj = Instance.ItemPool.Get();
             var rectTransform = iobj.GetComponent<RectTransform>();
-            var rectTransformSizeDelta = rectTransform.sizeDelta;
-            rectTransformSizeDelta.x = _itemSize[_findItemSize[itemName], 0];
-            rectTransformSizeDelta.y = _itemSize[_findItemSize[itemName], 1];
-            rectTransform.SetParent(_inItemBox);
+            var image = iobj.GetComponent<Image>();
+            var item = iobj.GetComponent<InInventoryItem>();
+            rectTransform.sizeDelta = new Vector2(_itemSize[_findItemSize[itemSize], 0], _itemSize[_findItemSize[itemSize], 1]);
+            item.sizeX = _itemSize[_findItemSize[itemSize], 0];
+            item.sizeY = _itemSize[_findItemSize[itemSize], 1];
+            image.sprite = itemSprite[itemType];
+            rectTransform.SetParent(inItemBox);
             rectTransform.anchoredPosition = new Vector2(0, 0);
         }
     }

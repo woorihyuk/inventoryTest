@@ -19,8 +19,6 @@ namespace Script.Player
 
         void Start()
         {
-            
-            print(collider2D.bounds.extents);
         }
 
         // Update is called once per frame
