@@ -1,3 +1,4 @@
+using Script.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,18 +23,13 @@ namespace Script.Player
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             var position = transform.position;
             var movePosition = _distance.normalized * (speed * Time.deltaTime);
             var bounds1 = collider2D.bounds;
             
-            // Debug.DrawRay(
-            //     ((Vector2)position + new Vector2(bounds1.extents.x * _distance.x, bounds1.extents.y * _distance.y)),
-            //     _rRayDistance, Color.magenta);
-            // Debug.DrawRay(
-            //     ((Vector2)position + new Vector2(bounds1.extents.x * _distance.x, bounds1.extents.y * _distance.y)),
-            //     _lRayDistance, Color.magenta);
+           
 
             if (Physics2D.Raycast
                 (position + new Vector3(bounds1.extents.x * _distance.x, bounds1.extents.y * _distance.y, 0),

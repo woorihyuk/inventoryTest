@@ -1,5 +1,5 @@
 {
-    "name": "input",
+    "name": "NewInput",
     "maps": [
         {
             "name": "Player",
@@ -92,7 +92,72 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "UiInput",
+            "id": "0d4ad5e3-259e-44f6-9c46-6a089b4201a4",
+            "actions": [
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "2182e5ee-67f4-4c45-8d88-ea2b4cf8282b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ItemRotate",
+                    "type": "Button",
+                    "id": "32103a3d-bf93-4834-b1bd-0e45e3c467fe",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "81127918-abdc-4cb3-ba17-5db45764e958",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9ad2e42b-20cc-45af-b77d-e1e05548010e",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ItemRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
-    "controlSchemes": []
+    "controlSchemes": [
+        {
+            "name": "PC",
+            "bindingGroup": "PC",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
 }

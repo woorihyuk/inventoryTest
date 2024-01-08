@@ -13,7 +13,7 @@ public class InteractiveObject : MonoBehaviour
     
 
 
-    public void OnSelect()
+    public static void OnSelect()
     {
         print("상호작용 활성화");
     }

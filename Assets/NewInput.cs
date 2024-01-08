@@ -114,14 +114,83 @@ public partial class @NewInput : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UiInput"",
+            ""id"": ""0d4ad5e3-259e-44f6-9c46-6a089b4201a4"",
+            ""actions"": [
+                {
+                    ""name"": ""Escape"",
+                    ""type"": ""Button"",
+                    ""id"": ""2182e5ee-67f4-4c45-8d88-ea2b4cf8282b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ItemRotate"",
+                    ""type"": ""Button"",
+                    ""id"": ""32103a3d-bf93-4834-b1bd-0e45e3c467fe"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""81127918-abdc-4cb3-ba17-5db45764e958"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Escape"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9ad2e42b-20cc-45af-b77d-e1e05548010e"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ItemRotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""PC"",
+            ""bindingGroup"": ""PC"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Keyboard>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                },
+                {
+                    ""devicePath"": ""<Mouse>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        }
+    ]
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
+        // UiInput
+        m_UiInput = asset.FindActionMap("UiInput", throwIfNotFound: true);
+        m_UiInput_Escape = m_UiInput.FindAction("Escape", throwIfNotFound: true);
+        m_UiInput_ItemRotate = m_UiInput.FindAction("ItemRotate", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -218,9 +287,64 @@ public partial class @NewInput : IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // UiInput
+    private readonly InputActionMap m_UiInput;
+    private IUiInputActions m_UiInputActionsCallbackInterface;
+    private readonly InputAction m_UiInput_Escape;
+    private readonly InputAction m_UiInput_ItemRotate;
+    public struct UiInputActions
+    {
+        private @NewInput m_Wrapper;
+        public UiInputActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Escape => m_Wrapper.m_UiInput_Escape;
+        public InputAction @ItemRotate => m_Wrapper.m_UiInput_ItemRotate;
+        public InputActionMap Get() { return m_Wrapper.m_UiInput; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UiInputActions set) { return set.Get(); }
+        public void SetCallbacks(IUiInputActions instance)
+        {
+            if (m_Wrapper.m_UiInputActionsCallbackInterface != null)
+            {
+                @Escape.started -= m_Wrapper.m_UiInputActionsCallbackInterface.OnEscape;
+                @Escape.performed -= m_Wrapper.m_UiInputActionsCallbackInterface.OnEscape;
+                @Escape.canceled -= m_Wrapper.m_UiInputActionsCallbackInterface.OnEscape;
+                @ItemRotate.started -= m_Wrapper.m_UiInputActionsCallbackInterface.OnItemRotate;
+                @ItemRotate.performed -= m_Wrapper.m_UiInputActionsCallbackInterface.OnItemRotate;
+                @ItemRotate.canceled -= m_Wrapper.m_UiInputActionsCallbackInterface.OnItemRotate;
+            }
+            m_Wrapper.m_UiInputActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Escape.started += instance.OnEscape;
+                @Escape.performed += instance.OnEscape;
+                @Escape.canceled += instance.OnEscape;
+                @ItemRotate.started += instance.OnItemRotate;
+                @ItemRotate.performed += instance.OnItemRotate;
+                @ItemRotate.canceled += instance.OnItemRotate;
+            }
+        }
+    }
+    public UiInputActions @UiInput => new UiInputActions(this);
+    private int m_PCSchemeIndex = -1;
+    public InputControlScheme PCScheme
+    {
+        get
+        {
+            if (m_PCSchemeIndex == -1) m_PCSchemeIndex = asset.FindControlSchemeIndex("PC");
+            return asset.controlSchemes[m_PCSchemeIndex];
+        }
+    }
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnInteraction(InputAction.CallbackContext context);
+    }
+    public interface IUiInputActions
+    {
+        void OnEscape(InputAction.CallbackContext context);
+        void OnItemRotate(InputAction.CallbackContext context);
     }
 }

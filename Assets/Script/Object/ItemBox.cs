@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using Script.UI;
 using UnityEngine;
 
@@ -6,23 +6,26 @@ namespace Script.Object
 {
     public class ItemBox : MonoBehaviour
     {
-        private bool opend;
-        private class ItemInformation
-        {
-            public int ItemSizeNum;
-        }
+        public List<DefaultItem> inBoxItems;
+        private InGameUiManager _inGameUiManager;
+        private bool _opened;
 
         private void Start()
         {
-            opend = true;
+            _inGameUiManager = FindFirstObjectByType<InGameUiManager>();
+            _opened = true;
         }
 
         public void OpenBox()
         {
-            InGameUiManager.Instance.RootingMenuOn(true);
-            print(Items.Instance);
-            if(opend)Items.Instance.AddItem("2X2", 0);
-            opend = false;
+            _inGameUiManager.RootingMenuOn(true);
+            _opened = false;
         }
     }
-}
+} 
+
+
+
+
+
+    

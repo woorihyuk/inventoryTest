@@ -26,7 +26,7 @@ namespace Script.Player
         }
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             _collider = GetComponentsInChildren<CircleCollider2D>()[0];
             _filter = new ContactFilter2D
@@ -37,7 +37,7 @@ namespace Script.Player
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             var counts = _collider.OverlapCollider(_filter, _colliders);
 
@@ -47,16 +47,16 @@ namespace Script.Player
                 _lastInteractiveObject = null;
             }
 
-            foreach (var col in _colliders)
+            foreach (var col in _colliders) 
             {
-                var obj = col.GetComponent<InteractiveObject>();
+                var obj = col.GetComponent<InteractiveObject>(); // 태그 비교로 변경
                 if (obj.objectType == InteractiveObjectType.None) continue;
 
                 if (_lastInteractiveObject == null)
                 {
                     _lastInteractiveObject =
                         new InteractiveData(Vector2.Distance(transform.position, obj.transform.position), obj);
-                    obj.OnSelect();
+                    InteractiveObject.OnSelect();
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace Script.Player
 
                     if (_lastInteractiveObject.InteractiveObject != obj)
                     {
-                        obj.OnSelect();
+                        InteractiveObject.OnSelect();
                         _lastInteractiveObject.InteractiveObject.OnDeselect();
                     }
 

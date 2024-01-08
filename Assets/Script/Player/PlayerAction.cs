@@ -25,14 +25,15 @@ namespace Script.Player
 
         public void Interaction()
         {
-            if (_interactiveObjectChecker.TryGetLastInteractiveObject(out var obj))
-            {
-                if (obj.objectType==InteractiveObjectType.ItemBox)
-                {
-                    var itemBox = obj.gameObject.GetComponent<ItemBox>();
-                    itemBox.OpenBox();
-                }
-            }
+            if (!_interactiveObjectChecker.TryGetLastInteractiveObject(out var obj)) return;
+            if (obj.objectType != InteractiveObjectType.ItemBox) return;
+            var itemBox = obj.gameObject.GetComponent<ItemBox>();
+            itemBox.OpenBox();
+        }
+
+        public void ItemRotation()
+        {
+            //InventoryManager.Instance.item
         }
     }
 }
