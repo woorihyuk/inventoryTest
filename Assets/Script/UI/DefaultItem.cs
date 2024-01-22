@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Script.UI
 {
-    public class DefaultItem : MonoBehaviour//, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class DefaultItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         //아이템 정보
         public string itemName;
@@ -17,8 +17,7 @@ namespace Script.UI
         public int stack;
 
         public GameObject gridPositionObj;
-        
-        private ItemGrid[,] _lastGrids;
+
         private InGameUiManager _inGameUiManager;
         private RectTransform _gridPosition;
         private Vector2 _startPos;
@@ -72,74 +71,76 @@ namespace Script.UI
             transform.position = eventData.position;
         }
 
-        // public void OnEndDrag(PointerEventData eventData)
-        // {
-        //     _isGrabbed = false;
-        //     InventoryManager.Instance.grabbedItem = null;
-        //     var position = transform.position;
-        //     var posX = -1;
-        //     var posY = -1;
-        //     var root = false;
-        //     float gridDistance = 10000;
-        //     var gridPos = Vector2.zero;
-        //     RectTransform[,] grids;
-        //     bool[,] gridCheck;
-        //     List<GameObject> lastItemList;
-        //     List<GameObject> itemList;
-        //     // 인벤토리와 아이템 박스 중 어느 쪽에 가까운지 판단
-        //     if (Vector2.Distance(position, _inGameUiManager.inventory.position) > Vector2.Distance(position, _inGameUiManager.itemBox.position))
-        //     {
-        //         grids = _inGameUiManager.itemBoxGrid.GetComponent<RectTransform[,]>();
-        //         lastItemList = _inGameUiManager.inInventoryItems;
-        //         itemList = _inGameUiManager.inBoxItems;
-        //     }
-        //     else
-        //     {
-        //         gridCheck = InventoryManager.Instance.inventoryGrids;
-        //         grids = _inGameUiManager.inventoryGridObjects.GetComponent<RectTransform>();
-        //         
-        //         lastItemList = _inGameUiManager.inBoxItems;
-        //         itemList = _inGameUiManager.inInventoryItems;
-        //         root = true;
-        //     }
-        //     
-        //     // 가장 가까운 그리드 찾기
-        //     for (var i = 0; i < grids.GetLength(1); i++)
-        //     {
-        //         for (var j = 0; j < grids.GetLength(0); j++)
-        //         {
-        //             var a = Vector2.Distance(grids[j, i].transform.position,
-        //                 _gridPosition.position);
-        //             if (!(a < gridDistance)) continue;
-        //
-        //             gridDistance = a;
-        //             gridPos = grids[j, i].transform.position + transform.position -
-        //                       _gridPosition.position;
-        //             posX = j;
-        //             posY = i;
-        //         }
-        //     }
-        //     
-        //     // 그리드가 없거나 겹치는지 확인
-        //     if (gridDistance > 70 || InInventoryCheck(gridPos) || OverLapCheck(grids, posX, posY))
-        //     {
-        //         OverLapp(_lastGrids, _gridPosX, _gridPosY);
-        //         transform.position = _startPos;
-        //         return; 
-        //     }
-        //     _isInInventory = root;
-        //     InStack();
-        //     grids[posX, posY].possessionItemData = itemName;
-        //     OverLapp(grids, posX, posY);
-        //     _gridPosX = posX;
-        //     _gridPosY = posY;
-        //     _lastGrids = grids;
-        //
-        //     transform.position = gridPos;
-        //     
-        //     lastItemList.Remove(gameObject); // 게임 매니저에서 아이템 리스트에서 제거
-        //     itemList.Add(gameObject);// 게임 매니저에서 아이템 리스트에 추가
-        // }
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            _isGrabbed = false;
+            InventoryManager.Instance.grabbedItem = null;
+            var position = transform.position;
+            var posX = -1;
+            var posY = -1;
+            var root = false;
+            float gridDistance = 10000;
+            var gridPos = Vector2.zero;
+            RectTransform[,] grids;
+            bool[,] gridCheck;
+            List<GameObject> lastItemList;
+            List<GameObject> itemList;
+            // 인벤토리와 아이템 박스 중 어느 쪽에 가까운지 판단
+            if (Vector2.Distance(position, _inGameUiManager.inventory.position) > Vector2.Distance(position, _inGameUiManager.itemBox.position))
+            {
+                // 아이템 박스
+                gridCheck = InventoryManager.Instance.boxGrids;
+                grids = _inGameUiManager.itemBoxGridObjects;
+                lastItemList = _inGameUiManager.inInventoryItems;
+                itemList = _inGameUiManager.inBoxItems;
+            }
+            else
+            {
+                // 인벤토리
+                gridCheck = InventoryManager.Instance.inventoryGrids;
+                grids = _inGameUiManager.inventoryGridObjects;
+                
+                lastItemList = _inGameUiManager.inBoxItems;
+                itemList = _inGameUiManager.inInventoryItems;
+                root = true;
+            }
+            
+            // 가장 가까운 그리드 찾기
+            for (var i = 0; i < grids.GetLength(1); i++)
+            {
+                for (var j = 0; j < grids.GetLength(0); j++)
+                {
+                    var a = Vector2.Distance(grids[j, i].position,
+                        _gridPosition.position);
+                    if (!(a < gridDistance)) continue;
+        
+                    gridDistance = a;
+                    gridPos = grids[j, i].position + transform.position -
+                              _gridPosition.position;
+                    posX = j;
+                    posY = i;
+                }
+            }
+            
+            // 그리드가 없거나 겹치는지 확인
+            if (gridDistance > 70 || InInventoryCheck(gridPos) || OverLapCheck(gridCheck, posX, posY))
+            {
+                OverLapp(gridCheck, _gridPosX, _gridPosY);
+                transform.position = _startPos;
+                return; 
+            }
+            _isInInventory = root;
+            //InStack();
+            //grids[posX, posY].possessionItemData = itemName;
+            OverLapp(gridCheck, posX, posY);
+            _gridPosX = posX;
+            _gridPosY = posY;
+
+            transform.position = gridPos;
+            
+            lastItemList.Remove(gameObject); // 게임 매니저에서 아이템 리스트에서 제거
+            itemList.Add(gameObject);// 게임 매니저에서 아이템 리스트에 추가
+        }
 
         private void OverLapp(bool[,] itemGrids, int posX, int posY, bool isOverlap = true)
         {
@@ -153,9 +154,9 @@ namespace Script.UI
             }
         }
 
-        private bool OverLapCheck(ItemGrid[,] itemGrids, int x, int y)
+        private bool OverLapCheck(bool[,] itemGrids, int x, int y)
         {
-            if (itemGrids[x, y].isOverlap) return true;
+            if (itemGrids[x, y]) return true;
             if (x + countX > itemGrids.GetLength(0) || y + countY > itemGrids.GetLength(1))
             {
                 return true;
@@ -165,7 +166,7 @@ namespace Script.UI
             {
                 for (var l = 0; l < countX; l++)
                 {
-                    if (!itemGrids[x + l, y + k].isOverlap) continue;
+                    if (!itemGrids[x + l, y + k]) continue;
                     return true;
                 }
             }

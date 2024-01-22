@@ -25,6 +25,7 @@ namespace Script.Player
         public InventorySizeData inventorySizeData;
         //인벤토리 그리드
         public bool[,] inventoryGrids;
+        public bool[,] boxGrids;
         //인벤토리 업데이트 여부
         public bool isInventoryUpdate;
         
@@ -36,17 +37,18 @@ namespace Script.Player
         private void Awake()
         {
             Instance = this;
-            print("dfdf");
             
         }
-        
+
         public void OpenInventory()
         {
             inventory.SetActive(true);
             if (isInventoryUpdate)
             {
-                inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
-                inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
+                //inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
+                //inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
+                inventoryGrids = new bool[5, 5];
+                inGameUiManager.InventoryUpdate(5, 5);
                 isInventoryUpdate = false;
             }
 

@@ -34,6 +34,11 @@ namespace Script
             playerAction.Interaction();
         }
 
+        public void OnOpenInventory(InputAction.CallbackContext context)
+        {
+            InventoryManager.Instance.OpenInventory();
+        }
+
         public void OnEscape(InputAction.CallbackContext context)
         {
             uiAction.Escape();
