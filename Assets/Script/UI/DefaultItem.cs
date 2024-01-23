@@ -8,19 +8,21 @@ namespace Script.UI
 {
     public class DefaultItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
+        public ItemData thisData;
         //아이템 정보
-        public int id;
-        public string itemName;
-        public int itemPrise;
-        public string itemDescription;
-        public Vector2 itemSize;
-        public int countX;
-        public int countY;
-        public int stack;
-        public bool stackable;
+        // public int id;
+        // public string itemName;
+        // public int itemPrise;
+        // public string itemDescription;
+        // public Vector2 itemSize;
+        // public int countX;
+        // public int countY;
+        // public int stack;
+        // public bool stackable;
 
         public InGameUiManager inGameUiManager;
         public GameObject gridPositionObj;
+        public bool isRotation;
 
         private RectTransform _rectTransform;
         private RectTransform _gridPosition;
@@ -44,7 +46,9 @@ namespace Script.UI
             {
                 return;
             }
-            (countX, countY) = (countY, countX);
+
+            isRotation = !isRotation;
+            //(countX, countY) = (countY, countX);
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -115,9 +119,10 @@ namespace Script.UI
                     posY = i;
                 }
             }
+            Debug.Log($"{posX}, {posY}");
             
             // 그리드가 없는지 확인
-            if (gridDistance > 70)
+            if (gridDistance > 70 || InInventoryCheck(gridCheck, posX, posY))
             {
                 OverLapp(gridCheck, gridPosX, gridPosY);
                 transform.position = _startPos;
@@ -126,10 +131,11 @@ namespace Script.UI
             // 다른 아이템과 겹치는지 확인
             if (OverLapCheck(gridCheck, posX, posY))
             {
+                print(gridCheck[posX, posY]);
                 //같고 중첩 가능 아이템일 경우
-                if (posData[posX, posY].id == id && posData[posX, posY].stackable)
+                if (posData[posX, posY].thisData.itemId == thisData.itemId && posData[posX, posY].thisData.stackableItem)
                 {
-                    posData[posX, posY].stack++;
+                    posData[posX, posY].thisData.stack++;
                     Items.instance.RemoveItem(this);
                 }
             }
@@ -150,28 +156,31 @@ namespace Script.UI
         private void OverLapp(bool[,] itemGrids, int posX, int posY, bool isOverlap = true)
         {
             itemGrids[posX, posY] = isOverlap;
-            for (var i = 0; i < countY; i++)
+            for (var i = 0; i < (isRotation ? thisData.itemSizeX : thisData.itemSizeY); i++)
             {
-                for (var j = 0; j < countX; j++)
+                for (var j = 0; j < (isRotation ? thisData.itemSizeY : thisData.itemSizeX); j++)
                 {
                     itemGrids[j + posX, i + posY] = isOverlap;
                 }
             }
         }
 
+        private bool InInventoryCheck(bool[,] itemGrids, int x, int y)
+        {
+            return x + (isRotation ? thisData.itemSizeY : thisData.itemSizeX) > itemGrids.GetLength(0) || y + (isRotation ? thisData.itemSizeX : thisData.itemSizeY) > itemGrids.GetLength(1);
+        }
+
         private bool OverLapCheck(bool[,] itemGrids, int x, int y)
         {
             if (itemGrids[x, y]) return true;
-            if (x + countX > itemGrids.GetLength(0) || y + countY > itemGrids.GetLength(1))
-            {
-                return true;
-            }
+            
 
-            for (var k = 0; k < countY; k++)
+            for (var k = 0; k < (isRotation ? thisData.itemSizeX : thisData.itemSizeY); k++)
             {
-                for (var l = 0; l < countX; l++)
+                for (var l = 0; l < (isRotation ? thisData.itemSizeY : thisData.itemSizeX); l++)
                 {
                     if (!itemGrids[x + l, y + k]) continue;
+                    print("here1");
                     return true;
                 }
             }
@@ -207,10 +216,7 @@ namespace Script.UI
                     if (OverLapCheck(grid, j, i)) continue;
                     OverLapp(grid, j, i);
                     var position = transform.position;
-                    print(inGameUiManager.itemBoxGridObjects[j, i].position);
-                    Debug.Log($"{j}, {i}");
                     _rectTransform.anchoredPosition = inGameUiManager.itemBoxGridObjects[j, i].position + (position - _gridPosition.position);
-                    print(transform.localPosition);
                     gridPosX = j;
                     gridPosY = i;
                     return;

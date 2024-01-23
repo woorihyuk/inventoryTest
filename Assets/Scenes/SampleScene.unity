@@ -1203,7 +1203,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 1910825960267878355, guid: c9d630fe291864025a837cd09ed2e75a, type: 3}
+  data: []
   inventory: {fileID: 1173615247}
+  itemSize: 80
 --- !u!114 &1619230288
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,6 +12,8 @@ namespace Script
         public Transform inventory;
         private IObjectPool<DefaultItem> _itemPool;
         private InGameUiManager _inGameUiManager;
+
+        [SerializeField] private int itemSize;
         
         //테스트용
         private readonly ItemData _testData = new ItemData
@@ -22,7 +24,7 @@ namespace Script
             stack = 0,
             stackableItem = false,
             itemSizeX = 1,
-            itemSizeY = 1,
+            itemSizeY = 2,
             itemDescription = null
         };
 
@@ -47,18 +49,11 @@ namespace Script
         {
             var obj = _itemPool.Get();
             var rectTransform = obj.gameObject.GetComponent<RectTransform>();
+            obj.thisData = _testData;
             obj.inGameUiManager = _inGameUiManager;
-            obj.id = _testData.itemId;
-            obj.itemPrise = _testData.itemPrice;
-            obj.itemSize = new Vector2(_testData.itemSizeX, _testData.itemSizeY);
-            obj.countX = _testData.itemSizeX;
-            obj.countY = _testData.itemSizeY;
-            obj.stackable = _testData.stackableItem;
             obj.isInInventory = isInInventory;
-            
-            rectTransform.sizeDelta = new Vector2(80, 160);
+            rectTransform.sizeDelta = new Vector2(itemSize*_testData.itemSizeX, itemSize*_testData.itemSizeY);
             rectTransform.SetParent(itemParent);
-
             obj.IntoItemBox();
             
             return obj;
