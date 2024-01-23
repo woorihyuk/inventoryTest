@@ -76,7 +76,6 @@ namespace Script.UI
 
         public void OpenBox(int sizeX, int sizeY)
         {
-            Debug.Log($"{sizeX}, {sizeY}");
             itemBoxGridObjects = new RectTransform[sizeX, sizeY];
             
             for (var i = 0; i < sizeX; i++)

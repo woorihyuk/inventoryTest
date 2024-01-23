@@ -9,8 +9,6 @@ using UnityEngine.Serialization;
 namespace Script.Player
 {
     public struct InventorySizeData
-    
-    
     {
         public int sizeX;
         public int sizeY;

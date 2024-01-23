@@ -8,20 +8,10 @@ namespace Script.UI
 {
     public class DefaultItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        public ItemData thisData;
         //아이템 정보
-        // public int id;
-        // public string itemName;
-        // public int itemPrise;
-        // public string itemDescription;
-        // public Vector2 itemSize;
-        // public int countX;
-        // public int countY;
-        // public int stack;
-        // public bool stackable;
+         public ItemData data;
 
         public InGameUiManager inGameUiManager;
-        public GameObject gridPositionObj;
         public bool isRotation;
 
         private RectTransform _rectTransform;
@@ -29,8 +19,9 @@ namespace Script.UI
         private Vector2 _startPos;
         public bool isInInventory;
         private bool _isGrabbed;
-        [FormerlySerializedAs("_gridPosX")] public int gridPosX;
-        [FormerlySerializedAs("_gridPosY")] public int gridPosY;
+        public int stack;
+        public int gridPosX;
+        public int gridPosY;
 
         private void Awake()
         {
@@ -133,9 +124,9 @@ namespace Script.UI
             {
                 print(gridCheck[posX, posY]);
                 //같고 중첩 가능 아이템일 경우
-                if (posData[posX, posY].thisData.itemId == thisData.itemId && posData[posX, posY].thisData.stackableItem)
+                if (posData[posX, posY].data.itemId == data.itemId && posData[posX, posY].data.stackableItem)
                 {
-                    posData[posX, posY].thisData.stack++;
+                    posData[posX, posY].stack++;
                     Items.instance.RemoveItem(this);
                 }
             }
@@ -156,9 +147,9 @@ namespace Script.UI
         private void OverLapp(bool[,] itemGrids, int posX, int posY, bool isOverlap = true)
         {
             itemGrids[posX, posY] = isOverlap;
-            for (var i = 0; i < (isRotation ? thisData.itemSizeX : thisData.itemSizeY); i++)
+            for (var i = 0; i < (isRotation ? data.itemSizeX : data.itemSizeY); i++)
             {
-                for (var j = 0; j < (isRotation ? thisData.itemSizeY : thisData.itemSizeX); j++)
+                for (var j = 0; j < (isRotation ? data.itemSizeY : data.itemSizeX); j++)
                 {
                     itemGrids[j + posX, i + posY] = isOverlap;
                 }
@@ -167,7 +158,7 @@ namespace Script.UI
 
         private bool InInventoryCheck(bool[,] itemGrids, int x, int y)
         {
-            return x + (isRotation ? thisData.itemSizeY : thisData.itemSizeX) > itemGrids.GetLength(0) || y + (isRotation ? thisData.itemSizeX : thisData.itemSizeY) > itemGrids.GetLength(1);
+            return x + (isRotation ? data.itemSizeY : data.itemSizeX) > itemGrids.GetLength(0) || y + (isRotation ? data.itemSizeX : data.itemSizeY) > itemGrids.GetLength(1);
         }
 
         private bool OverLapCheck(bool[,] itemGrids, int x, int y)
@@ -175,9 +166,9 @@ namespace Script.UI
             if (itemGrids[x, y]) return true;
             
 
-            for (var k = 0; k < (isRotation ? thisData.itemSizeX : thisData.itemSizeY); k++)
+            for (var k = 0; k < (isRotation ? data.itemSizeX : data.itemSizeY); k++)
             {
-                for (var l = 0; l < (isRotation ? thisData.itemSizeY : thisData.itemSizeX); l++)
+                for (var l = 0; l < (isRotation ? data.itemSizeY : data.itemSizeX); l++)
                 {
                     if (!itemGrids[x + l, y + k]) continue;
                     print("here1");

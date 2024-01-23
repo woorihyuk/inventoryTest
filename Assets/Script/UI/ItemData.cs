@@ -9,7 +9,6 @@ public class ItemData
     public int itemId;
     public string itemName;
     public int itemPrice;
-    public int stack;
     public bool stackableItem;
     public int itemSizeX;
     public int itemSizeY;
