@@ -111,7 +111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -24.1218, y: 13.558}
+  m_AnchoredPosition: {x: -24.121826, y: 13.557983}
   m_SizeDelta: {x: 48.2437, y: 27.116}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5321192857281145079
@@ -192,9 +192,9 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960, y: -540}
   m_SizeDelta: {x: 160, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1910825960267878358
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 130b60a3be73c9c4fb4955c168f75e5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
   itemName: 
   itemPrise: 0
   itemDescription: 
@@ -254,4 +255,9 @@ MonoBehaviour:
   countX: 0
   countY: 0
   stack: 0
-  gridPositionObj: {fileID: 0}
+  stackable: 0
+  inGameUiManager: {fileID: 0}
+  gridPositionObj: {fileID: 1143329287989036105}
+  isInInventory: 0
+  gridPosX: 0
+  gridPosY: 0

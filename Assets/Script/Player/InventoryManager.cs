@@ -18,6 +18,8 @@ namespace Script.Player
     public class InventoryManager : MonoBehaviour
     {
         public static InventoryManager Instance;
+
+        public DefaultItem[,] inInventoryItems;
         
         public InGameUiManager inGameUiManager;
         
@@ -25,11 +27,9 @@ namespace Script.Player
         public InventorySizeData inventorySizeData;
         //인벤토리 그리드
         public bool[,] inventoryGrids;
-        public bool[,] boxGrids;
         //인벤토리 업데이트 여부
         public bool isInventoryUpdate;
         
-        public List<DefaultItem> inInventoryItems;
         public GameObject inventory;
         public ItemBox openedBox;
         public DefaultItem grabbedItem;
@@ -48,6 +48,7 @@ namespace Script.Player
                 //inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
                 //inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
                 inventoryGrids = new bool[5, 5];
+                inInventoryItems = new DefaultItem[5, 5];
                 inGameUiManager.InventoryUpdate(5, 5);
                 isInventoryUpdate = false;
             }

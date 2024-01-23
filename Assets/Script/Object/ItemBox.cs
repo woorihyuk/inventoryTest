@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Script.Player;
 using Script.UI;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace Script.Object
         public List<DefaultItem> inBoxItems;
         public int boxSizeX;
         public int boxSizeY;
+        public DefaultItem[,] boxItemPosData;
+        public bool[,] boxGrids;
         private InGameUiManager _inGameUiManager;
         private bool _opened;
 
@@ -20,9 +23,18 @@ namespace Script.Object
 
         public void OpenBox()
         {
-            print("open");
-            _inGameUiManager.RootingMenuOn(true);
-            //_opened = false;
+            if (_opened)
+            {
+                return;
+            }
+            InventoryManager.Instance.openedBox = this;
+
+            boxItemPosData = new DefaultItem[boxSizeX, boxSizeY];
+            boxGrids = new bool[boxSizeX, boxSizeY];
+            _inGameUiManager.OpenBox(boxSizeX, boxSizeY);
+            _inGameUiManager.RootingMenuOn(boxSizeX, boxSizeY);
+            inBoxItems.Add(Items.instance.RootItem(_inGameUiManager.itemBox, false));
+            _opened = true;
         }
     }
 } 

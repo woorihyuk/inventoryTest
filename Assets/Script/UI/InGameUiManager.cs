@@ -23,13 +23,12 @@ namespace Script.UI
         public GameObject inventoryGrid;
         public RectTransform inventory;
         public RectTransform inventoryGridParent;
+        public RectTransform itemBoxGridParent;
         public RectTransform itemBox;
         public List<GameObject> inInventoryItems; // 이거 인벤토리 메니저로 분리
         public List<GameObject> inBoxItems;
-        public int inventorySizeX;
-        public int inventorySizeY;
         
-        private IObjectPool<RectTransform> _inventoryGirdPool;
+        private IObjectPool<RectTransform> _gridObjectPool;
         
         private int _itemGridCount;
 
@@ -40,7 +39,7 @@ namespace Script.UI
             // InventoryGrid = new ItemGrid[5, inventorySizeY];
             // itemBoxGrid = new ItemGrid[5, 8];
             
-            _inventoryGirdPool = new ObjectPool<RectTransform>(() => Instantiate(inventoryGrid).GetComponent<RectTransform>(), 
+            _gridObjectPool = new ObjectPool<RectTransform>(() => Instantiate(inventoryGrid).GetComponent<RectTransform>(), 
                 obj =>
                 {
                     obj.gameObject.SetActive(true); 
@@ -58,27 +57,51 @@ namespace Script.UI
 
             if (inventoryGridObjects != null)
             {
-                for (var i = 0; i < inventorySizeX; i++)
+                foreach (var obj in inventoryGridObjects)
                 {
-                    for (var j = 0; j < inventorySizeY; j++)
-                    {                  
-                        _inventoryGirdPool.Release(inventoryGridObjects[i, j]);
-                    }
+                    _gridObjectPool.Release(obj);
                 }
             }
-            
-            
-            inventorySizeX = sizeX;
-            inventorySizeY = sizeY;
             inventoryGridObjects = new RectTransform[sizeX, sizeY];
             
-            for (var i = 0; i < inventorySizeX; i++)
+            for (var i = 0; i < sizeX; i++)
             {
-                for (var j = 0; j < inventorySizeY; j++)
+                for (var j = 0; j < sizeX; j++)
                 {                  
-                    inventoryGridObjects[j, i] = _inventoryGirdPool.Get();
-                    inventoryGridObjects[j, i].GetComponent<RectTransform>().SetParent(inventoryGridParent);
+                    inventoryGridObjects[j, i] = _gridObjectPool.Get();
+                    inventoryGridObjects[j, i].SetParent(inventoryGridParent);
                 }
+            }
+        }
+
+        public void OpenBox(int sizeX, int sizeY)
+        {
+            Debug.Log($"{sizeX}, {sizeY}");
+            itemBoxGridObjects = new RectTransform[sizeX, sizeY];
+            
+            for (var i = 0; i < sizeX; i++)
+            {
+                for (var j = 0; j < sizeX; j++)
+                {                  
+                    itemBoxGridObjects[j, i] = _gridObjectPool.Get();
+                    itemBoxGridObjects[j, i].SetParent(itemBoxGridParent);
+                }
+            }
+
+            //InventoryManager.Instance.boxGrids = new bool[sizeX, sizeY];
+            inGameUi[2].SetActive(true);
+        }
+
+        public void CloseBox()
+        {
+            if (itemBoxGridObjects == null)
+            {
+                return;
+            }
+            
+            foreach (var obj in itemBoxGridObjects)
+            {
+                _gridObjectPool.Release(obj);
             }
         }
 
@@ -89,13 +112,20 @@ namespace Script.UI
             inGameUi[3].SetActive(i);
         }
 
-        public void RootingMenuOn(bool i)
+        public void RootingMenuOn(int sizeX, int sizeY)
         {
             //Time.timeScale = i ? 0 : 1;
-            inGameUi[0].SetActive(i);
+            inGameUi[0].SetActive(true);
             InventoryManager.Instance.OpenInventory();
-            inGameUi[2].SetActive(i);
-            inGameUi[3].SetActive(i);
+            inGameUi[3].SetActive(true);
+        }
+
+        public void RootingMenuOff()
+        {
+            inGameUi[0].SetActive(false);
+            InventoryManager.Instance.OpenInventory();
+            CloseBox();
+            inGameUi[3].SetActive(false);
         }
     }
 }
