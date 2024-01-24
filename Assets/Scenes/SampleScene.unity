@@ -1230,7 +1230,7 @@ MonoBehaviour:
   inventoryGridParent: {fileID: 235577003}
   itemBoxGridParent: {fileID: 390831915}
   itemBox: {fileID: 1576330185}
-  itemParent: {fileID: 0}
+  itemParent: {fileID: 1865881098}
 --- !u!4 &1619230290
 Transform:
   m_ObjectHideFlags: 0
