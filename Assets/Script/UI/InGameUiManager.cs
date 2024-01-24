@@ -79,6 +79,7 @@ namespace Script.UI
         public void CreateBox(int sizeX, int sizeY)
         {
             itemBoxGridObjects = new RectTransform[sizeX, sizeY];
+            itemBoxGridParent.sizeDelta = new Vector2(sizeX , sizeY)* ItemDatabaseManager.instance.itemSize;
             
             for (var i = 0; i < sizeX; i++)
             {

@@ -37,7 +37,7 @@ namespace Script
         public TextAsset itemData;
         
         // 아이템 기준 크기
-        [SerializeField] private int itemSize;
+        public int itemSize;
 
         private void Awake()
         {
@@ -78,7 +78,7 @@ namespace Script
             obj.itemData.data = findItemData[id];
             obj.InGameUiManager = _inGameUiManager;
             obj.isInInventory = false;
-            rectTransform.sizeDelta = new Vector2(itemSize*itemDataAsset.itemData[4].itemSizeX, itemSize*itemDataAsset.itemData[4].itemSizeY);
+            rectTransform.sizeDelta = new Vector2(findItemData[id].itemSizeX, findItemData[id].itemSizeY)*itemSize;
             rectTransform.SetParent(itemParent);
             obj.IntoItemBox();
             

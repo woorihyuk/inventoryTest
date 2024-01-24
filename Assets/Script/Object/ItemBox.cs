@@ -37,10 +37,9 @@ namespace Script.Object
                 _inBoxItemData = new InInventoryItemData[boxSizeX, boxSizeY];
                 foreach (var val in _inBoxItemData)
                 {
-                    print(val.data.id);
                 }
                 boxGrids = new bool[boxSizeX, boxSizeY];
-                var obj = ItemDatabaseManager.instance.RootItem(1001, _inGameUiManager.itemBox);
+                var obj = ItemDatabaseManager.instance.RootItem(3101, _inGameUiManager.itemBox);
                 _inBoxItemData[obj.itemData.posX, obj.itemData.posY] = obj.itemData;
                 //_inBoxItems.Add(obj.itemData);
                 _opened = true;
@@ -89,7 +88,15 @@ namespace Script.Object
 
         public void AddToBox(InInventoryItemData item)
         {
+            print("box");
             _inBoxItemData[item.posX, item.posY] = item;
+            foreach (var val in _inBoxItemData)
+            {
+                if (val.data != null)
+                {
+                    print(val.data.itemName);
+                }
+            }
         }
         
         public void RemoveFromBox(InInventoryItemData data)

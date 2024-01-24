@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8002946246834971191}
   - component: {fileID: 8002946246834971184}
   - component: {fileID: 8002946246834971185}
-  - component: {fileID: 8002946246834971190}
   m_Layer: 5
   m_Name: Grid
   m_TagString: Untagged
@@ -104,17 +103,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &8002946246834971190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8002946246834971187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 152e363e685f451d86d929ed63fcd011, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  possessionItemData: 
-  isOverlap: 0

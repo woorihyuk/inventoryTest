@@ -37,6 +37,7 @@ public class ArmorData
     public float armorPoint;
 }
 
+[Serializable]
 public struct InInventoryItemData
 {
     public ItemData data;

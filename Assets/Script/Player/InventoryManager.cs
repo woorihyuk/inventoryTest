@@ -70,7 +70,15 @@ namespace Script.Player
 
         public void AddToInventory(InInventoryItemData item)
         {
+            print("inventory");
             _inInventoryItemData[item.posX, item.posY] = item;
+            foreach (var val in _inInventoryItemData)
+            {
+                if (val.data != null)
+                {
+                    print(val.data.itemName);
+                }
+            }
         }
         
         public void RemoveFromInventory(InInventoryItemData data)
