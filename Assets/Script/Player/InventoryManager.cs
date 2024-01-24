@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Script.Object;
 using Script.UI;
 using UnityEngine;
@@ -15,9 +16,9 @@ namespace Script.Player
     }
     public class InventoryManager : MonoBehaviour
     {
-        public static InventoryManager Instance;
+        public static InventoryManager instance;
 
-        public DefaultItem[,] inInventoryItems;
+        private InInventoryItemData[,] _inInventoryItemData;
         
         public InGameUiManager inGameUiManager;
         
@@ -27,14 +28,16 @@ namespace Script.Player
         public bool[,] inventoryGrids;
         //인벤토리 업데이트 여부
         public bool isInventoryUpdate;
+        public bool isBoxOpened;
         
-        public GameObject inventory;
         public ItemBox openedBox;
         public DefaultItem grabbedItem;
-
+        
+        [SerializeField] private GameObject inventory;
+        
         private void Awake()
         {
-            Instance = this;
+            instance = this;
             
         }
 
@@ -46,7 +49,7 @@ namespace Script.Player
                 //inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
                 //inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
                 inventoryGrids = new bool[5, 5];
-                inInventoryItems = new DefaultItem[5, 5];
+                _inInventoryItemData = new InInventoryItemData[5, 5];
                 inGameUiManager.InventoryUpdate(5, 5);
                 isInventoryUpdate = false;
             }
@@ -59,10 +62,21 @@ namespace Script.Player
             inventory.SetActive(false);
             inGameUiManager.InventoryOnOff(false);
         }
-        
-        public void SaveInventory()
+
+        public InInventoryItemData GetItemData(int x, int y)
         {
-           
+            return _inInventoryItemData[x, y];
+        }
+
+        public void AddToInventory(InInventoryItemData item)
+        {
+            _inInventoryItemData[item.posX, item.posY] = item;
+        }
+        
+        public void RemoveFromInventory(InInventoryItemData data)
+        {
+            _inInventoryItemData[data.posX, data.posY].data = null;
+
         }
     }
 }

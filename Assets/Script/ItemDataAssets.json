@@ -1,7 +1,7 @@
 ﻿{
-  "ItemData": [
+  "itemData": [
     {
-      "itemId": 1001,
+      "id": 1001,
       "itemName": "고철",
       "itemPrice": 5,
       "stackableItem": true,
@@ -10,7 +10,7 @@
       "itemDescription": "이제는 쓸모없어진 금속조각"
     },
     {
-      "itemId": 1201,
+      "id": 1201,
       "itemName": "금덩어리",
       "itemPrice": 100,
       "stackableItem": true,
@@ -19,7 +19,7 @@
       "itemDescription": "인류 문명에 큰 영향을 미친 금속으로 귀금속의 제왕이자 현대 문명에서 절대 빠질 수 없는 필수 광물"
     },
     {
-      "itemId": 2001,
+      "id": 2001,
       "itemName": "물병",
       "itemPrice": 10,
       "stackableItem": false,
@@ -28,7 +28,7 @@
       "itemDescription": "깨끝한 물 이다"
     },
     {
-      "itemId": 2101,
+      "id": 2101,
       "itemName": "에너지드링크",
       "itemPrice": 25,
       "stackableItem": false,
@@ -37,7 +37,7 @@
       "itemDescription": "Iron"
     },
     {
-      "itemId": 3101,
+      "id": 3101,
       "itemName": "리볼버",
       "itemPrice": 400,
       "stackableItem": false,
@@ -46,7 +46,7 @@
       "itemDescription": "카우보이들이 쓰던 6연발의 권총"
     },
     {
-      "itemId": 4101,
+      "id": 4101,
       "itemName": "야전삽",
       "itemPrice": 200,
       "stackableItem": false,
@@ -55,7 +55,7 @@
       "itemDescription": "본래의 용도보다 더 좋은 쓸모를 얻었습니다"
     },
     {
-      "itemId": 5101,
+      "id": 5101,
       "itemName": "방탄복",
       "itemPrice": 300,
       "stackableItem": false,
@@ -64,7 +64,7 @@
       "itemDescription": "총알을 막아줍니다"
     },
     {
-      "itemId": 6101,
+      "id": 6101,
       "itemName": "철모",
       "itemPrice": 200,
       "stackableItem": false,
@@ -73,7 +73,7 @@
       "itemDescription": "권총탄 정도는 막아줍니다"
     },
     {
-      "itemId": 7101,
+      "id": 7101,
       "itemName": "???",
       "itemPrice": 1000,
       "stackableItem": false,

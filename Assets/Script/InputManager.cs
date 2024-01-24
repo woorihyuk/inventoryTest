@@ -36,7 +36,7 @@ namespace Script
 
         public void OnOpenInventory(InputAction.CallbackContext context)
         {
-            InventoryManager.Instance.OpenInventory();
+            InventoryManager.instance.OpenInventory();
         }
 
         public void OnEscape(InputAction.CallbackContext context)

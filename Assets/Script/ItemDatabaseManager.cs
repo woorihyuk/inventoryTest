@@ -1,41 +1,43 @@
 using System;
+using System.Collections.Generic;
 using Script.UI;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 
 namespace Script
 {
     [Serializable]
     public class AllData
     {
-        public ItemData[] ItemData;
+        public ItemData[] itemData;
+        
+        
     }
-    public class Items : MonoBehaviour
+    public class ItemDatabaseManager : MonoBehaviour
     {
         //변수 이름 알잘딱하게 수정 필요
-        public static Items instance;
+        public static ItemDatabaseManager instance;
+        
+        // 아이템 프리펩
         public GameObject item;
-        public ItemData[] data;
-        [SerializeField]
-        public AllData itemDataAsset;
+        
+        // id값으로 아이템 관리
+        public Dictionary<int, ItemData> findItemData;
+        
+        // 아이템 데이터
+        [SerializeField] public AllData itemDataAsset;
         public Transform inventory;
+        
+        // 아이템 오브젝트풀
         private IObjectPool<DefaultItem> _itemPool;
+        
         private InGameUiManager _inGameUiManager;
     
         public TextAsset itemData;
-        [SerializeField] private int itemSize;
         
-        //테스트용
-        // private readonly ItemData _testData = new ItemData
-        // {
-        //     itemId = 1,
-        //     itemName = "testItem",
-        //     itemPrice = 1,
-        //     stackableItem = false,
-        //     itemSizeX = 1,
-        //     itemSizeY = 2,
-        //     itemDescription = null
-        // };
+        // 아이템 기준 크기
+        [SerializeField] private int itemSize;
 
         private void Awake()
         {
@@ -54,18 +56,29 @@ namespace Script
                 }, Destroy, false, 10000);
             
             itemDataAsset = JsonUtility.FromJson<AllData>(itemData.text);
-            data = itemDataAsset.ItemData;
-            print(data[0].itemName);
+            findItemData = new Dictionary<int, ItemData>();
+            foreach (var data in itemDataAsset.itemData)
+            {
+                //print(data.id);
+                findItemData.Add(data.id, data);
+            }
         }
 
-        public DefaultItem RootItem(RectTransform itemParent, bool isInInventory)
+        public DefaultItem AddItem(int id)
+        {
+            var obj = _itemPool.Get();
+            obj.itemData.data = findItemData[id];
+            return obj;
+        }
+
+        public DefaultItem RootItem(int id, RectTransform itemParent)
         {
             var obj = _itemPool.Get();
             var rectTransform = obj.gameObject.GetComponent<RectTransform>();
-            obj.data = data[4];
-            obj.inGameUiManager = _inGameUiManager;
-            obj.isInInventory = isInInventory;
-            rectTransform.sizeDelta = new Vector2(itemSize*data[4].itemSizeX, itemSize*data[4].itemSizeY);
+            obj.itemData.data = findItemData[id];
+            obj.InGameUiManager = _inGameUiManager;
+            obj.isInInventory = false;
+            rectTransform.sizeDelta = new Vector2(itemSize*itemDataAsset.itemData[4].itemSizeX, itemSize*itemDataAsset.itemData[4].itemSizeY);
             rectTransform.SetParent(itemParent);
             obj.IntoItemBox();
             

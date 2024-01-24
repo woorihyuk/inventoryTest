@@ -25,8 +25,10 @@ namespace Script.UI
         public RectTransform inventoryGridParent;
         public RectTransform itemBoxGridParent;
         public RectTransform itemBox;
-        public List<GameObject> inInventoryItems; // 이거 인벤토리 메니저로 분리
-        public List<GameObject> inBoxItems;
+
+        public RectTransform itemParent;
+        // public List<GameObject> inInventoryItems; // 이거 인벤토리 메니저로 분리
+        // public List<GameObject> inBoxItems;
         
         private IObjectPool<RectTransform> _gridObjectPool;
         
@@ -74,7 +76,7 @@ namespace Script.UI
             }
         }
 
-        public void OpenBox(int sizeX, int sizeY)
+        public void CreateBox(int sizeX, int sizeY)
         {
             itemBoxGridObjects = new RectTransform[sizeX, sizeY];
             
@@ -91,17 +93,22 @@ namespace Script.UI
             inGameUi[2].SetActive(true);
         }
 
-        public void CloseBox()
+        private void CloseBox()
         {
             if (itemBoxGridObjects == null)
             {
                 return;
             }
-            
-            foreach (var obj in itemBoxGridObjects)
+
+            for (var index0 = 0; index0 < itemBoxGridObjects.GetLength(0); index0++)
             {
-                _gridObjectPool.Release(obj);
+                for (var index1 = 0; index1 < itemBoxGridObjects.GetLength(1); index1++)
+                {
+                    var obj = itemBoxGridObjects[index0, index1];
+                    _gridObjectPool.Release(obj);
+                }
             }
+           
         }
 
         public void InventoryOnOff(bool i)
@@ -111,18 +118,18 @@ namespace Script.UI
             inGameUi[3].SetActive(i);
         }
 
-        public void RootingMenuOn(int sizeX, int sizeY)
+        public void RootingMenuOn()
         {
             //Time.timeScale = i ? 0 : 1;
             inGameUi[0].SetActive(true);
-            InventoryManager.Instance.OpenInventory();
+            InventoryManager.instance.OpenInventory();
             inGameUi[3].SetActive(true);
         }
 
         public void RootingMenuOff()
         {
             inGameUi[0].SetActive(false);
-            InventoryManager.Instance.OpenInventory();
+            InventoryManager.instance.OpenInventory();
             CloseBox();
             inGameUi[3].SetActive(false);
         }
