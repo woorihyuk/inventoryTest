@@ -12,7 +12,7 @@ namespace Script.Object
         public int boxSizeX;
         public int boxSizeY;
         private InInventoryItemData[,] _inBoxItemData;
-        public bool[,] boxGrids;
+        public bool[,] boxOverlapInfo;
         private InGameUiManager _inGameUiManager;
         
         private bool _isOpen;
@@ -38,7 +38,7 @@ namespace Script.Object
                 foreach (var val in _inBoxItemData)
                 {
                 }
-                boxGrids = new bool[boxSizeX, boxSizeY];
+                boxOverlapInfo = new bool[boxSizeX, boxSizeY];
                 var obj = ItemDatabaseManager.instance.RootItem(3101, _inGameUiManager.itemBox);
                 _inBoxItemData[obj.itemData.posX, obj.itemData.posY] = obj.itemData;
                 //_inBoxItems.Add(obj.itemData);
@@ -88,15 +88,7 @@ namespace Script.Object
 
         public void AddToBox(InInventoryItemData item)
         {
-            print("box");
             _inBoxItemData[item.posX, item.posY] = item;
-            foreach (var val in _inBoxItemData)
-            {
-                if (val.data != null)
-                {
-                    print(val.data.itemName);
-                }
-            }
         }
         
         public void RemoveFromBox(InInventoryItemData data)

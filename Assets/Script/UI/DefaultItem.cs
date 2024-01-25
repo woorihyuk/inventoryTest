@@ -45,7 +45,7 @@ namespace Script.UI
             InventoryManager.instance.grabbedItem = this;
             var position = transform.position;
             _dragStartPos = position;
-            OverLapp(isInInventory ? InventoryManager.instance.inventoryGrids : InventoryManager.instance.openedBox.boxGrids,
+            OverLapp(isInInventory ? InventoryManager.instance.inventoryOverlapInfo : InventoryManager.instance.openedBox.boxOverlapInfo,
                 itemData.posX, itemData.posY, false);
         }
 
@@ -65,14 +65,14 @@ namespace Script.UI
             float gridDistance = 10000;
             var gridPos = Vector2.zero;
             RectTransform[,] grids;
-            InInventoryItemData inventoryItemData;
-            bool[,] gridCheck;
+            bool[,] overlapInfo;
             // 인벤토리와 아이템 박스 중 어느 쪽에 가까운지 판단
+            var distanceForInventory = Vector2.Distance(position, InGameUiManager.inventory.position);
             if (Vector2.Distance(position, InGameUiManager.inventory.position) > Vector2.Distance(position, InGameUiManager.itemBox.position))
             {
                 // 아이템 박스
                 //inventoryItemData = InventoryManager.instance.openedBox.inBoxItemData;
-                gridCheck = InventoryManager.instance.openedBox.boxGrids;
+                overlapInfo = InventoryManager.instance.openedBox.boxOverlapInfo;
                 grids = InGameUiManager.itemBoxGridObjects;
                 //lastItemList = InGameUiManager.inInventoryItems;
                 //itemList = InGameUiManager.inBoxItems;
@@ -81,7 +81,7 @@ namespace Script.UI
             {
                 // 인벤토리
                 //inventoryItemData = InventoryManager.instance.InInventoryItemData;
-                gridCheck = InventoryManager.instance.inventoryGrids;
+                overlapInfo = InventoryManager.instance.inventoryOverlapInfo;
                 grids = InGameUiManager.inventoryGridObjects;
                 
                 //lastItemList = InGameUiManager.inBoxItems;
@@ -109,20 +109,22 @@ namespace Script.UI
                 }
             }
 
-            inventoryItemData = root ? InventoryManager.instance.GetItemData(posX, posY) : InventoryManager.instance.openedBox.GetItemData(posX, posY);
+            var inventoryItemData = root ? 
+                InventoryManager.instance.GetItemData(posX, posY) 
+                : InventoryManager.instance.openedBox.GetItemData(posX, posY);
             
-            if (gridDistance > 70 || InInventoryCheck(gridCheck, posX, posY))
+            if (gridDistance > 70 || InInventoryCheck(overlapInfo, posX, posY))
             {
                 GoBackItem(itemData.posX, itemData.posY);
                 return; 
             }
             // 다른 아이템과 겹치는지 확인
-            if (OverLapCheck(gridCheck, posX, posY))
+            if (OverLapCheck(overlapInfo, posX, posY))
             {
-                if (OverLapCheck(gridCheck, posX, posY, true))
+                if (OverLapCheck(overlapInfo, posX, posY, true))
                 {
                     print($"{posX}, {posY}");
-                    print(gridCheck[0, 0]);
+                    print(overlapInfo[0, 0]);
                     if (inventoryItemData.data.id == itemData.data.id && inventoryItemData.data.stackableItem)
                     {
                         inventoryItemData.stack++;
@@ -139,7 +141,7 @@ namespace Script.UI
 
             //InStack();
             //grids[posX, posY].possessionItemData = itemName;
-            OverLapp(gridCheck, posX, posY);
+            OverLapp(overlapInfo, posX, posY);
             itemData.posX = posX;
             itemData.posY = posY;
 
@@ -176,7 +178,7 @@ namespace Script.UI
 
         private void GoBackItem(int x, int y)
         {
-            OverLapp(isInInventory ? InventoryManager.instance.inventoryGrids : InventoryManager.instance.openedBox.boxGrids, x, y);
+            OverLapp(isInInventory ? InventoryManager.instance.inventoryOverlapInfo : InventoryManager.instance.openedBox.boxOverlapInfo, x, y);
             transform.position = _dragStartPos;
         }
 
@@ -223,7 +225,7 @@ namespace Script.UI
         
         public void IntoItemBox(int posX = -1, int posY = -1)
         {
-            var grid = InventoryManager.instance.openedBox.boxGrids;
+            var grid = InventoryManager.instance.openedBox.boxOverlapInfo;
             
             if (posX == -1 && posY == -1)
             {

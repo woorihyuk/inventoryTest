@@ -25,7 +25,7 @@ namespace Script.Player
         //플레이어 인벤토리 사이즈
         public InventorySizeData inventorySizeData;
         //인벤토리 그리드
-        public bool[,] inventoryGrids;
+        public bool[,] inventoryOverlapInfo;
         //인벤토리 업데이트 여부
         public bool isInventoryUpdate;
         public bool isBoxOpened;
@@ -48,7 +48,7 @@ namespace Script.Player
             {
                 //inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
                 //inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
-                inventoryGrids = new bool[5, 5];
+                inventoryOverlapInfo = new bool[5, 5];
                 _inInventoryItemData = new InInventoryItemData[5, 5];
                 inGameUiManager.InventoryUpdate(5, 5);
                 isInventoryUpdate = false;
@@ -70,15 +70,7 @@ namespace Script.Player
 
         public void AddToInventory(InInventoryItemData item)
         {
-            print("inventory");
             _inInventoryItemData[item.posX, item.posY] = item;
-            foreach (var val in _inInventoryItemData)
-            {
-                if (val.data != null)
-                {
-                    print(val.data.itemName);
-                }
-            }
         }
         
         public void RemoveFromInventory(InInventoryItemData data)
