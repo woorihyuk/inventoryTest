@@ -6,8 +6,12 @@ using UnityEngine.Serialization;
 
 namespace Script
 {
-    public class InputManager : MonoBehaviour, NewInput.IPlayerActions, NewInput.IUiInputActions
+    public class InputController : MonoBehaviour
     {
+        public static InputController instance;
+        
+        public InputActionAsset inputActionAsset;
+        
         public PlayerMove playerMove;
         public PlayerAction playerAction;
         public UiAction uiAction;
@@ -16,16 +20,8 @@ namespace Script
 
         private void Awake()
         {
-            _input = new NewInput();
-            _input.Player.SetCallbacks(this);
-            _input.UiInput.SetCallbacks(this);
-            _input.Player.Enable();
-            _input.UiInput.Enable();
-        }
-
-        public void OnMove(InputAction.CallbackContext context)
-        {
-            playerMove.OnPlayerMove(context.ReadValue<Vector2>());
+            instance = this;
+            inputActionAsset.FindActionMap("Player").Enable();
         }
 
         

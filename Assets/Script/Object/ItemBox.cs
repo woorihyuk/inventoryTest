@@ -55,7 +55,8 @@ namespace Script.Object
                             continue;
                         }
                         var val = _inBoxItemData[index0, index1];
-                        var obj = ItemDatabaseManager.instance.AddItem(val.data.id);
+                        var obj = ItemDatabaseManager.instance.AddItem(val.data.id, _inGameUiManager.inBoxItemParent);
+                        obj.transform.parent = _inGameUiManager.inBoxItemParent;
                         obj.IntoItemBox(val.posX, val.posY);
                     }
                 }
@@ -67,9 +68,9 @@ namespace Script.Object
 
         public void RemoveBox()
         {
-            var items = _inGameUiManager.itemParent.GetComponentsInChildren<DefaultItem>();
+            _isOpen = false;
+            var items = _inGameUiManager.inBoxItemParent.GetComponentsInChildren<DefaultItem>();
             
-            var removeObjList = new HashSet<DefaultItem>();
             for (var i = 0; i < items.Length; i++)
             {
                 ItemDatabaseManager.instance.RemoveItem(items[i]);
@@ -86,9 +87,10 @@ namespace Script.Object
             return _inBoxItemData[x, y];
         }
 
-        public void AddToBox(InInventoryItemData item)
+        public void AddToBox(InInventoryItemData item, RectTransform rectTransform)
         {
             _inBoxItemData[item.posX, item.posY] = item;
+            rectTransform.SetParent(_inGameUiManager.inBoxItemParent);
         }
         
         public void RemoveFromBox(InInventoryItemData data)

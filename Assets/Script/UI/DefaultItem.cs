@@ -39,6 +39,11 @@ namespace Script.UI
             isRotation = !isRotation;
         }
 
+        public void SetParent(RectTransform parent)
+        {
+            _myTransform.SetParent(parent);
+        }
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             _isGrabbed = true;
@@ -109,23 +114,33 @@ namespace Script.UI
                 }
             }
 
-            var inventoryItemData = root ? 
-                InventoryManager.instance.GetItemData(posX, posY) 
-                : InventoryManager.instance.openedBox.GetItemData(posX, posY);
+            // var inventoryItemData = root ? 
+            //     InventoryManager.instance.GetItemData(posX, posY) 
+            //     : InventoryManager.instance.openedBox.GetItemData(posX, posY);
             
             if (gridDistance > 70 || InInventoryCheck(overlapInfo, posX, posY))
             {
+                print(InInventoryCheck(overlapInfo, posX, posY));
+                print($"{posX}, {posY}");
                 GoBackItem(itemData.posX, itemData.posY);
                 return; 
             }
             // 다른 아이템과 겹치는지 확인
             if (OverLapCheck(overlapInfo, posX, posY))
             {
+                if (!itemData.data.stackableItem)
+                {
+                    GoBackItem(itemData.posX, itemData.posY);
+                    print("overlap");
+                    return; 
+                }
                 if (OverLapCheck(overlapInfo, posX, posY, true))
                 {
                     print($"{posX}, {posY}");
-                    print(overlapInfo[0, 0]);
-                    if (inventoryItemData.data.id == itemData.data.id && inventoryItemData.data.stackableItem)
+                    var inventoryItemData = root ? 
+                        InventoryManager.instance.GetItemData(posX, posY) 
+                        : InventoryManager.instance.openedBox.GetItemData(posX, posY);
+                    if (inventoryItemData.data.id == itemData.data.id)
                     {
                         inventoryItemData.stack++;
                         ItemDatabaseManager.instance.RemoveItem(this);
@@ -134,9 +149,6 @@ namespace Script.UI
                     GoBackItem(itemData.posX, itemData.posY);
                     return; 
                 }
-                
-                GoBackItem(itemData.posX, itemData.posY);
-                return; 
             }
 
             //InStack();
@@ -148,14 +160,18 @@ namespace Script.UI
             transform.position = gridPos;
             if (root)
             {
-                isInInventory = true;
                 //InventoryManager.instance.inInventoryItemData[posX, posY] = itemData;
-                InventoryManager.instance.AddToInventory(itemData);
+                InventoryManager.instance.AddToInventory(itemData, _myTransform);
+                if (!isInInventory)
+                {
+                    InventoryManager.instance.openedBox.RemoveFromBox(itemData);
+                }
+                isInInventory = true;
             }
             else
             {
-                _myTransform.SetParent(InGameUiManager.itemParent);
-                InventoryManager.instance.openedBox.AddToBox(itemData);
+                //_myTransform.SetParent(InGameUiManager.itemParent);
+                InventoryManager.instance.openedBox.AddToBox(itemData, _myTransform);
                 if (isInInventory)
                 {
                     isInInventory = false;

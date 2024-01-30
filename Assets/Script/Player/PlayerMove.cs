@@ -1,4 +1,3 @@
-using Script.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,51 +5,55 @@ namespace Script.Player
 {
     public class PlayerMove : MonoBehaviour
     {
-        public LayerMask layerMask;
+        [SerializeField] private new BoxCollider2D collider2D;
+        
+        [SerializeField] private LayerMask layerMask;
 
-        public new BoxCollider2D collider2D;
+        [SerializeField] private float speed;
 
-        public float speed;
-
-        private RaycastHit2D _hit;
-
-        private Vector2 _distance, _rRayDistance, _lRayDistance;
-
-        private bool _canMove;
-
-        void Start()
+        private InputAction _move;
+        
+        private Vector2 _distance;
+        
+        private void Start()
         {
+            _move = InputController.instance.inputActionAsset.FindActionMap("Player").FindAction("Move");
+            _move.performed += OnPlayerMove;
+            _move.canceled += _ =>
+            {
+                _distance = Vector2.zero;
+            };
         }
 
-        // Update is called once per frame
         private void Update()
         {
+            //print(InputController.instance.inputActionAsset.FindActionMap("Player").enabled);
             var position = transform.position;
-            var movePosition = _distance.normalized * (speed * Time.deltaTime);
-            var bounds1 = collider2D.bounds;
+            var bounds = collider2D.bounds;
             
-           
-
-            if (Physics2D.Raycast
-                (position + new Vector3(bounds1.extents.x * _distance.x, bounds1.extents.y * _distance.y, 0),
-                    _rRayDistance, collider2D.bounds.extents.x * 0.9f, layerMask)
-                ||
-                Physics2D.Raycast
-                (position + new Vector3(bounds1.extents.x * _distance.x, bounds1.extents.y * _distance.y, 0),
-                    _lRayDistance, collider2D.bounds.extents.x * 0.9f, layerMask)
-               )
+            //상단 레이
+            if (Physics2D.Raycast(position + new Vector3(bounds.size.x * 0.45f,bounds.extents.y), Vector2.left, bounds.size.x * 0.9f, layerMask))
             {
-                _canMove = false;
+                _distance = new Vector2(_distance.x, _distance.y > 0 ? 0 : _distance.y);
             }
-            else
+            //하단 레이
+            if (Physics2D.Raycast(position + new Vector3(bounds.extents.x * 0.45f,-bounds.extents.y), Vector2.left, bounds.size.x * 0.9f, layerMask))
             {
-                _canMove = true;
+                _distance = new Vector2(_distance.x, _distance.y < 0 ? 0 : _distance.y);
             }
-
-            if (_canMove)
+            //좌측 레이
+            if (Physics2D.Raycast(position + new Vector3(-bounds.extents.x,bounds.extents.y * 0.45f), Vector2.down, bounds.size.y * 0.9f, layerMask))
             {
-                transform.position += (Vector3)movePosition;
+                _distance = new Vector2(_distance.x < 0 ? 0 : _distance.x, _distance.y);
             }
+            //우측 레이
+            if (Physics2D.Raycast(position + new Vector3(bounds.extents.x,bounds.extents.y * 0.45f), Vector2.down, bounds.size.y * 0.9f, layerMask))
+            {
+                _distance = new Vector2(_distance.x > 0 ? 0 : _distance.x, _distance.y);
+            }
+            
+            var movePosition = _distance * (speed * Time.deltaTime);
+            transform.position += (Vector3)movePosition;
         }
 
         public void RayCast()
@@ -58,49 +61,50 @@ namespace Script.Player
             
         }
 
-        public void OnPlayerMove(Vector2 direction)
+        private void OnPlayerMove(InputAction.CallbackContext context)
         {
-            _distance = direction;
-            if (direction == new Vector2(0, 1))
-            {
-                _rRayDistance = new Vector2(1, 0);
-                _lRayDistance = new Vector2(-1, 0);
-            }
-            else if (direction == new Vector2(1, 1))
-            {
-                _rRayDistance = new Vector2(0, -1);
-                _lRayDistance = new Vector2(-1, 0);
-            }
-            else if (direction == new Vector2(1, 0))
-            {
-                _rRayDistance = new Vector2(0, -1);
-                _lRayDistance = new Vector2(0, 1);
-            }
-            else if (direction == new Vector2(1, -1))
-            {
-                _rRayDistance = new Vector2(-1, 0);
-                _lRayDistance = new Vector2(0, 1);
-            }
-            else if (direction == new Vector2(0, -1))
-            {
-                _rRayDistance = new Vector2(-1, 0);
-                _lRayDistance = new Vector2(1, 0);
-            }
-            else if (direction == new Vector2(-1, -1))
-            {
-                _rRayDistance = new Vector2(0, 1);
-                _lRayDistance = new Vector2(1, 0);
-            }
-            else if (direction == new Vector2(-1, 0))
-            {
-                _rRayDistance = new Vector2(0, 1);
-                _lRayDistance = new Vector2(0, -1);
-            }
-            else if (direction == new Vector2(-1, 1))
-            {
-                _rRayDistance = new Vector2(1, 0);
-                _lRayDistance = new Vector2(0, -1);
-            }
+            var dis = context.ReadValue<Vector2>();
+            _distance = dis;
+            // if (dis == new Vector2(0, 1))
+            // {
+            //     _rRayDistance = new Vector2(1, 0);
+            //     _lRayDistance = new Vector2(-1, 0);
+            // }
+            // else if (dis == new Vector2(1, 1))
+            // {
+            //     _rRayDistance = new Vector2(0, -1);
+            //     _lRayDistance = new Vector2(-1, 0);
+            // }
+            // else if (dis == new Vector2(1, 0))
+            // {
+            //     _rRayDistance = new Vector2(0, -1);
+            //     _lRayDistance = new Vector2(0, 1);
+            // }
+            // else if (dis == new Vector2(1, -1))
+            // {
+            //     _rRayDistance = new Vector2(-1, 0);
+            //     _lRayDistance = new Vector2(0, 1);
+            // }
+            // else if (dis == new Vector2(0, -1))
+            // {
+            //     _rRayDistance = new Vector2(-1, 0);
+            //     _lRayDistance = new Vector2(1, 0);
+            // }
+            // else if (dis == new Vector2(-1, -1))
+            // {
+            //     _rRayDistance = new Vector2(0, 1);
+            //     _lRayDistance = new Vector2(1, 0);
+            // }
+            // else if (dis == new Vector2(-1, 0))
+            // {
+            //     _rRayDistance = new Vector2(0, 1);
+            //     _lRayDistance = new Vector2(0, -1);
+            // }
+            // else if (dis == new Vector2(-1, 1))
+            // {
+            //     _rRayDistance = new Vector2(1, 0);
+            //     _lRayDistance = new Vector2(0, -1);
+            // }
         }
     }
 }

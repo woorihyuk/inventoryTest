@@ -21,14 +21,18 @@ namespace Script.UI
         public RectTransform[,] itemBoxGridObjects;
         
         public GameObject inventoryGrid;
+        
+        // 인벤토리, 박스 위치
         public RectTransform inventory;
+        public RectTransform itemBox;
+        
+        // 그리드 부모 오브젝트
         public RectTransform inventoryGridParent;
         public RectTransform itemBoxGridParent;
-        public RectTransform itemBox;
 
-        public RectTransform itemParent;
-        // public List<GameObject> inInventoryItems; // 이거 인벤토리 메니저로 분리
-        // public List<GameObject> inBoxItems;
+        // 아이템 부모 오브젝트
+        public RectTransform inInventoryItemParent;
+        public RectTransform inBoxItemParent;
         
         private IObjectPool<RectTransform> _gridObjectPool;
         
@@ -80,8 +84,8 @@ namespace Script.UI
         {
             itemBoxGridObjects = new RectTransform[sizeX, sizeY];
             itemBoxGridParent.sizeDelta = new Vector2(sizeX , sizeY)* ItemDatabaseManager.instance.itemSize;
-            
-            for (var i = 0; i < sizeX; i++)
+            var a = 0;
+            for (var i = 0; i < sizeY; i++)
             {
                 for (var j = 0; j < sizeX; j++)
                 {                  
@@ -106,10 +110,12 @@ namespace Script.UI
                 for (var index1 = 0; index1 < itemBoxGridObjects.GetLength(1); index1++)
                 {
                     var obj = itemBoxGridObjects[index0, index1];
+                    obj.SetParent(null);
                     _gridObjectPool.Release(obj);
                 }
             }
-           
+
+            inGameUi[2].SetActive(false);
         }
 
         public void InventoryOnOff(bool i)
@@ -117,6 +123,9 @@ namespace Script.UI
             inGameUi[0].SetActive(i);
             inGameUi[1].SetActive(i);
             inGameUi[3].SetActive(i);
+            inInventoryItemParent.gameObject.SetActive(i);
+            inBoxItemParent.gameObject.SetActive(i);
+            inInventoryItemParent.gameObject.SetActive(i);
         }
 
         public void RootingMenuOn()
@@ -125,14 +134,17 @@ namespace Script.UI
             inGameUi[0].SetActive(true);
             InventoryManager.instance.OpenInventory();
             inGameUi[3].SetActive(true);
+            inInventoryItemParent.gameObject.SetActive(true);
+            inBoxItemParent.gameObject.SetActive(true);
         }
 
         public void RootingMenuOff()
         {
             inGameUi[0].SetActive(false);
-            InventoryManager.instance.OpenInventory();
             CloseBox();
             inGameUi[3].SetActive(false);
+            inInventoryItemParent.gameObject.SetActive(false);
+            inBoxItemParent.gameObject.SetActive(false);
         }
     }
 }

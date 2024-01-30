@@ -59,7 +59,7 @@ public partial class @NewInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Vector2"",
                     ""id"": ""199d1c76-3a32-4a6a-8844-753ef23373de"",
-                    ""path"": ""2DVector(mode=1)"",
+                    ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

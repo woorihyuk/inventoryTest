@@ -64,10 +64,11 @@ namespace Script
             }
         }
 
-        public DefaultItem AddItem(int id)
+        public DefaultItem AddItem(int id, RectTransform itemParent)
         {
             var obj = _itemPool.Get();
             obj.itemData.data = findItemData[id];
+            obj.SetParent(itemParent);
             return obj;
         }
 
