@@ -19,6 +19,8 @@ namespace Script.UI
 
         private RectTransform _myTransform;
         private RectTransform _gridTransform;
+        private RectTransform _horizontalGridTransform;
+        private RectTransform _verticalGridTransform;
         private Vector2 _dragStartPos;
         public bool isInInventory;
         private bool _isGrabbed;
@@ -27,16 +29,21 @@ namespace Script.UI
         {
             _myTransform = GetComponent<RectTransform>();
             var childRectTransforms = GetComponentsInChildren<RectTransform>();
-            _gridTransform = childRectTransforms[1];
+            _horizontalGridTransform = childRectTransforms[1];
+            _verticalGridTransform = childRectTransforms[2];
+            _gridTransform = isRotation ? _verticalGridTransform : _horizontalGridTransform;
         }
 
         public void RotateItem()
         {
+            print("rot");
             if (!_isGrabbed)
             {
                 return;
             }
             isRotation = !isRotation;
+            _gridTransform = isRotation ? _verticalGridTransform : _horizontalGridTransform;
+            transform.rotation = Quaternion.Euler(0, 0, isRotation ? -90 : 0);
         }
 
         public void SetParent(RectTransform parent)
@@ -47,7 +54,7 @@ namespace Script.UI
         public void OnBeginDrag(PointerEventData eventData)
         {
             _isGrabbed = true;
-            InventoryManager.instance.grabbedItem = this;
+            InventoryManager.instance.GrabItem(this);
             var position = transform.position;
             _dragStartPos = position;
             OverLapp(isInInventory ? InventoryManager.instance.inventoryOverlapInfo : InventoryManager.instance.openedBox.boxOverlapInfo,
@@ -62,7 +69,7 @@ namespace Script.UI
         public void OnEndDrag(PointerEventData eventData)
         {
             _isGrabbed = false;
-            InventoryManager.instance.grabbedItem = null;
+            InventoryManager.instance.DropItem();
             var position = transform.position;
             var posX = -1;
             var posY = -1;

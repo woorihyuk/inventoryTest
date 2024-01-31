@@ -22,6 +22,7 @@ namespace Script.Player
         public InGameUiManager inGameUiManager;
         private InputAction _openInventoryAction;
         private InputAction _closeInventoryAction;
+        private InputAction _itemRotateAction;
         
         private InInventoryItemData[,] _inInventoryItemData;
 
@@ -42,8 +43,10 @@ namespace Script.Player
             instance = this;
             _openInventoryAction = InputController.instance.inputActionAsset.FindAction("OpenInventory");
             _closeInventoryAction = InputController.instance.inputActionAsset.FindAction("Escape");
+            _itemRotateAction = InputController.instance.inputActionAsset.FindAction("ItemRotate");
             _openInventoryAction.performed += _ => OpenInventory();
             _closeInventoryAction.performed += _ => CloseInventory();
+            _itemRotateAction.performed += _ => RotateItem();
         }
 
         public void OpenInventory()
@@ -76,6 +79,17 @@ namespace Script.Player
             }
             inGameUiManager.InventoryOnOff(false);
         }
+        
+        public void GrabItem(DefaultItem item)
+        {
+            grabbedItem = item;
+        }
+        
+        
+        public void DropItem()
+        {
+            grabbedItem = null;
+        }
 
         public InInventoryItemData GetItemData(int x, int y)
         {
@@ -92,6 +106,15 @@ namespace Script.Player
         {
             _inInventoryItemData[data.posX, data.posY].data = null;
 
+        }
+
+        private void RotateItem()
+        {
+            if (grabbedItem == null)
+            {
+                return;
+            }
+            grabbedItem.RotateItem();
         }
     }
 }
