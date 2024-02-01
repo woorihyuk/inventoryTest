@@ -9,6 +9,7 @@ namespace Script.Object
     public class ItemBox : MonoBehaviour
     {
         //private readonly List<InInventoryItemData> _inBoxItems = new();
+        public string boxName;
         public int boxSizeX;
         public int boxSizeY;
         private InInventoryItemData[,] _inBoxItemData;
@@ -39,7 +40,7 @@ namespace Script.Object
                 {
                 }
                 boxOverlapInfo = new bool[boxSizeX, boxSizeY];
-                var obj = ItemDatabaseManager.instance.RootItem(3101, _inGameUiManager.itemBox);
+                var obj = ItemDatabaseManager.instance.RootItem(3101, _inGameUiManager.inBoxItemParent);
                 _inBoxItemData[obj.itemData.posX, obj.itemData.posY] = obj.itemData;
                 //_inBoxItems.Add(obj.itemData);
                 _opened = true;

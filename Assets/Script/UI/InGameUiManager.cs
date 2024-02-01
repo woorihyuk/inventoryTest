@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
 using Script.Player;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Serialization;
+
+public enum Equipment
+{
+    Bag,
+    Gun,
+    Weapon,
+    Armor,
+    HadGear,
+}
 
 namespace Script.UI
 {
@@ -11,18 +21,15 @@ namespace Script.UI
     {
         // 이거 ui  출력 싸개로 변경하기!!!
         public GameObject[] inGameUi;
-        /*
-        background--0
-        inventory--1
-        rooting--2
-        items--3
-        */
+        public TMP_Text boxName;
+        
         public RectTransform[,] inventoryGridObjects;
         public RectTransform[,] itemBoxGridObjects;
         
         public GameObject inventoryGrid;
         
         // 인벤토리, 박스 위치
+        public RectTransform[] equipments;
         public RectTransform inventory;
         public RectTransform itemBox;
         
@@ -60,6 +67,9 @@ namespace Script.UI
 
         public void InventoryUpdate(int sizeX, int sizeY)
         {
+            var sizeDelta = new Vector2(sizeX, sizeY) * ItemDatabaseManager.instance.itemSize;
+            inventory.sizeDelta = sizeDelta;
+            inventory.anchoredPosition = new Vector2(sizeDelta.x / 2, -sizeDelta.y / 2);
 
             if (inventoryGridObjects != null)
             {
@@ -131,6 +141,7 @@ namespace Script.UI
         public void RootingMenuOn()
         {
             //Time.timeScale = i ? 0 : 1;
+            boxName.text = InventoryManager.instance.openedBox.name;
             inGameUi[0].SetActive(true);
             InventoryManager.instance.OpenInventory();
             inGameUi[3].SetActive(true);
