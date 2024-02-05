@@ -8,7 +8,7 @@ namespace Script
     {
         public static GameManager instance;
         
-        public List<DefaultItem> inventoryContents;
+        private List<InInventoryItemData> _inventoryContents;
 
         private void Awake()
         {
@@ -18,10 +18,16 @@ namespace Script
             }
             instance = this;
         }
-        
-        public void AddItem(DefaultItem defaultItem)
+
+        public void SaveItem(List<InInventoryItemData> items)
         {
-            inventoryContents.Add(defaultItem);
+            _inventoryContents = items;
         }
+
+        public List<InInventoryItemData> LoadItem()
+        {
+            return _inventoryContents;
+        }
+        
     }
 }

@@ -10,37 +10,61 @@ using UnityEngine.Serialization;
 
 namespace Script.Player
 {
-    public struct InventorySizeData
+    
+    public abstract class EquipmentSlot<T>
     {
-        public int sizeX;
-        public int sizeY;
+        public bool isUsed;
+        public InInventoryItemData slotItem;
+        public T equipmentData;
     }
+    
     public class InventoryManager : MonoBehaviour
     {
         public static InventoryManager instance;
         
-        public InGameUiManager inGameUiManager;
+        [FormerlySerializedAs("inGameUiManager")] public GridManager gridManager;
+
+        private InputActionMap _playerActionMap;
+        private InputActionMap _uiActionMap;
+        
         private InputAction _openInventoryAction;
         private InputAction _closeInventoryAction;
         private InputAction _itemRotateAction;
         
         private InInventoryItemData[,] _inInventoryItemData;
+        private List<InInventoryItemData> _inInventoryItemList;
 
-        //플레이어 인벤토리 사이즈
-        public InventorySizeData inventorySizeData;
-        //인벤토리 그리드
+        // 장비 슬롯
+        public EquipmentSlot<BagData> inventorySizeData;
+
+        public EquipmentSlot<GunData> gunData;
+
+        public EquipmentSlot<WeaponData> weaponData;
+
+        public EquipmentSlot<ArmorData> armorData;
+        
+        // 인벤토리 그리드
         public bool[,] inventoryOverlapInfo;
-        //인벤토리 업데이트 여부
+        // 인벤토리 업데이트 여부
         public bool isInventoryUpdate;
         
         public ItemBox openedBox;
         public DefaultItem grabbedItem;
         
         [SerializeField] private GameObject inventory;
+
+        private bool _isGrab;
+        
+        public InInventoryItemData GetItemData(int x, int y)
+        {
+            return _inInventoryItemData[x, y];
+        }
         
         private void Awake()
         {
             instance = this;
+            _playerActionMap = InputController.instance.inputActionAsset.FindActionMap("Player");
+            _uiActionMap = InputController.instance.inputActionAsset.FindActionMap("UiInput");
             _openInventoryAction = InputController.instance.inputActionAsset.FindAction("OpenInventory");
             _closeInventoryAction = InputController.instance.inputActionAsset.FindAction("Escape");
             _itemRotateAction = InputController.instance.inputActionAsset.FindAction("ItemRotate");
@@ -51,66 +75,62 @@ namespace Script.Player
 
         public void OpenInventory()
         {
-            InputController.instance.inputActionAsset.FindActionMap("Player").Disable();
-            InputController.instance.inputActionAsset.FindActionMap("UiInput").Enable();
+            _playerActionMap.Disable();
+            _uiActionMap.Enable();
             inventory.SetActive(true);
             if (isInventoryUpdate)
             {
                 //inventoryGrids = new bool[inventorySizeData.sizeX, inventorySizeData.sizeY];
-                //inGameUiManager.InventoryUpdate(inventorySizeData.sizeX, inventorySizeData.sizeY);
+                //inGameUiManager.InventoryUpdate(inventorySizeData.equipmentData.sizeX, inventorySizeData.equipmentData.sizeY);
                 inventoryOverlapInfo = new bool[5, 5];
                 _inInventoryItemData = new InInventoryItemData[5, 5];
-                inGameUiManager.InventoryUpdate(5, 5);
+                gridManager.InventoryUpdate(5, 5);
                 isInventoryUpdate = false;
             }
 
-            inGameUiManager.InventoryOnOff(true);
+            gridManager.InventoryOnOff(true);
         }
 
         private void CloseInventory()
         {
-            InputController.instance.inputActionAsset.FindActionMap("Player").Enable();
-            InputController.instance.inputActionAsset.FindActionMap("UiInput").Disable();
+            _playerActionMap.Enable();
+            _uiActionMap.Disable();
             inventory.SetActive(false);
             if (openedBox != null)
             {
-                inGameUiManager.RootingMenuOff();
+                gridManager.RootingMenuOff();
                 openedBox.RemoveBox();
             }
-            inGameUiManager.InventoryOnOff(false);
+            gridManager.InventoryOnOff(false);
         }
         
-        public void GrabItem(DefaultItem item)
+        public void GrabItem()
         {
-            grabbedItem = item;
+            _isGrab = true;
         }
-        
         
         public void DropItem()
         {
-            grabbedItem = null;
+            _isGrab = false;
         }
 
-        public InInventoryItemData GetItemData(int x, int y)
+        public void AddToInventory(InInventoryItemData data, RectTransform rectTransform)
         {
-            return _inInventoryItemData[x, y];
-        }
-
-        public void AddToInventory(InInventoryItemData item, RectTransform rectTransform)
-        {
-            _inInventoryItemData[item.posX, item.posY] = item;
-            rectTransform.SetParent(inGameUiManager.inInventoryItemParent);
+            _inInventoryItemData[data.posX, data.posY] = data;
+            rectTransform.SetParent(gridManager.inInventoryItemParent);
+            _inInventoryItemList.Add(data);
         }
         
         public void RemoveFromInventory(InInventoryItemData data)
         {
             _inInventoryItemData[data.posX, data.posY].data = null;
+            _inInventoryItemList.Remove(data);
 
         }
 
         private void RotateItem()
         {
-            if (grabbedItem == null)
+            if (!_isGrab)
             {
                 return;
             }

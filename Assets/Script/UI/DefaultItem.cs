@@ -13,7 +13,7 @@ namespace Script.UI
         //아이템 정보
         [SerializeField] public InInventoryItemData itemData;
 
-        public InGameUiManager InGameUiManager { private get; set; }
+        public GridManager GridManager { private get; set; }
         public bool isRotation;
 
         private RectTransform _myTransform;
@@ -21,6 +21,7 @@ namespace Script.UI
         private RectTransform _horizontalGridTransform;
         private RectTransform _verticalGridTransform;
         private Vector2 _dragStartPos;
+        private EquipmentType _curentEquipmentType;
         public bool isInInventory;
         private bool _isGrabbed;
         private bool _beforeRotate;
@@ -53,7 +54,7 @@ namespace Script.UI
         public void OnBeginDrag(PointerEventData eventData)
         {
             _isGrabbed = true;
-            InventoryManager.instance.GrabItem(this);
+            InventoryManager.instance.GrabItem();
             var position = transform.position;
             _dragStartPos = position;
             _beforeRotate = isRotation;
@@ -76,70 +77,87 @@ namespace Script.UI
             var root = false;
             float gridDistance = 10000;
             var gridPos = Vector2.zero;
-            RectTransform[,] grids;
-            bool[,] overlapInfo;
+            RectTransform[,] grids = { };
+            bool[,] overlapInfo = { };
             // 인벤토리와 아이템 박스 중 어느 쪽에 가까운지 판단
-            var distanceForInventory = Vector2.Distance(position, InGameUiManager.inventory.position);
+            var distanceForInventory = Vector2.Distance(position, GridManager.inventory.position);
 
             // 인벤토리와 가까움
-            if (Vector2.Distance(position, InGameUiManager.inventory.position) < gridDistance)
+            if (Vector2.Distance(position, GridManager.inventory.position) < gridDistance)
             {
                 overlapInfo = InventoryManager.instance.inventoryOverlapInfo;
-                grids = InGameUiManager.inventoryGridObjects;
+                grids = GridManager.inventoryGridObjects;
                 root = true;
-                gridDistance = Vector2.Distance(position, InGameUiManager.inventory.position);
+                gridDistance = Vector2.Distance(position, GridManager.inventory.position);
             }
             // 아이템 박스와 가까움
-            if (Vector2.Distance(position, InGameUiManager.itemBox.position)< gridDistance)
+            if (Vector2.Distance(position, GridManager.itemBox.position)< gridDistance)
             {
                 overlapInfo = InventoryManager.instance.openedBox.boxOverlapInfo;
-                grids = InGameUiManager.itemBoxGridObjects;
-                gridDistance = Vector2.Distance(position, InGameUiManager.itemBox.position);
+                grids = GridManager.itemBoxGridObjects;
+                gridDistance = Vector2.Distance(position, GridManager.itemBox.position);
             }
-            else
+
+            var type = (EquipmentType)Math.Truncate((decimal)(itemData.data.id / 1000));
+
+            switch (type)
             {
-                overlapInfo = InventoryManager.instance.inventoryOverlapInfo;
-                grids = InGameUiManager.inventoryGridObjects;
-                root = true;
-                gridDistance = Vector2.Distance(position, InGameUiManager.inventory.position);
+                case EquipmentType.Default:
+                    break;
+                case EquipmentType.Available:
+                    break;
+                case EquipmentType.Gun:
+                    break;
+                case EquipmentType.Weapon:
+                    break;
+                case EquipmentType.Armor:
+                    break;
+                case EquipmentType.HadGear:
+                    break;
+                case EquipmentType.Bag:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            // 가방 슬롯과 가까움
-            // if (Vector2.Distance(position, InGameUiManager.equipments[(int)Equipment.Bag].position)< gridDistance)
-            // {
-            //     
-            // }
+            
+            if (Math.Abs(gridDistance - 10000) <= 0)
+            {
+                return;
+            }
+
             
             // 가장 가까운 그리드 찾기
+            var isOutGrid = true;
+            
             for (var i = 0; i < grids.GetLength(1); i++)
             {
                 for (var j = 0; j < grids.GetLength(0); j++)
                 {
-                    var a = Vector2.Distance(grids[j, i].position,
-                        _gridTransform.position);
-                    if (a > gridDistance)
+                    var dis = Vector2.Distance(grids[j, i].position, _gridTransform.position);
+                    if (dis > gridDistance || dis > 70)
                     {
                         continue;
                     }
-        
-                    gridDistance = a;
-                    gridPos = grids[j, i].position + transform.position -
-                              _gridTransform.position;
+
+                    isOutGrid = false;
+                    gridPos = grids[j, i].position + transform.position - _gridTransform.position;
                     posX = j;
                     posY = i;
                 }
             }
             
-            if (gridDistance > 70 || InInventoryCheck(overlapInfo, posX, posY))
+            if (isOutGrid || InInventoryCheck(overlapInfo, posX, posY))
             {
-                GoBackItem(itemData.posX, itemData.posY);
+                GoBack(itemData.posX, itemData.posY);
                 return; 
             }
+            
             // 다른 아이템과 겹치는지 확인
             if (OverLapCheck(overlapInfo, posX, posY))
             {
                 if (!itemData.data.stackableItem)
                 {
-                    GoBackItem(itemData.posX, itemData.posY);
+                    GoBack(itemData.posX, itemData.posY);
                     return; 
                 }
                 if (OverLapCheck(overlapInfo, posX, posY, true))
@@ -153,21 +171,18 @@ namespace Script.UI
                         ItemDatabaseManager.instance.RemoveItem(this);
                         return;
                     }
-                    GoBackItem(itemData.posX, itemData.posY);
+                    GoBack(itemData.posX, itemData.posY);
                     return; 
                 }
             }
 
-            //InStack();
-            //grids[posX, posY].possessionItemData = itemName;
             OverLapp(overlapInfo, posX, posY);
             itemData.posX = posX;
             itemData.posY = posY;
-
+            
             transform.position = gridPos;
             if (root)
             {
-                //InventoryManager.instance.inInventoryItemData[posX, posY] = itemData;
                 InventoryManager.instance.AddToInventory(itemData, _myTransform);
                 if (!isInInventory)
                 {
@@ -187,6 +202,11 @@ namespace Script.UI
             }
         }
 
+        private void Drop()
+        {
+            
+        }
+
         private void OverLapp(bool[,] itemGrids, int posX, int posY, bool isOverlap = true)
         {
             itemGrids[posX, posY] = isOverlap;
@@ -199,7 +219,7 @@ namespace Script.UI
             }
         }
 
-        private void GoBackItem(int x, int y)
+        private void GoBack(int x, int y)
         {
             isRotation = _beforeRotate;
             _gridTransform = _beforeRotate ? _verticalGridTransform : _horizontalGridTransform;
@@ -240,7 +260,13 @@ namespace Script.UI
         private IEnumerator ItemMoveDelay(int x, int y)
         {
             yield return null;
-            _myTransform.position = InGameUiManager.itemBoxGridObjects[x, y].position + (transform.position - _gridTransform.position);
+            _myTransform.position = GridManager.itemBoxGridObjects[x, y].position + (transform.position - _gridTransform.position);
+        }
+
+        private void IntoEquipmentSlot(EquipmentType type)
+        {
+            transform.position = this.GridManager.equipments[(int)type].position;
+            isInInventory = true;
         }
         
         public void IntoItemBox(int posX = -1, int posY = -1)
@@ -251,14 +277,14 @@ namespace Script.UI
             {
                 return;
             }
-            for (var i = 0; i < InGameUiManager.itemBoxGridObjects.GetLength(0); i++)
+            for (var i = 0; i < GridManager.itemBoxGridObjects.GetLength(0); i++)
             {
-                for (var j = 0; j < InGameUiManager.itemBoxGridObjects.GetLength(1); j++)
+                for (var j = 0; j < GridManager.itemBoxGridObjects.GetLength(1); j++)
                 {
                     if (OverLapCheck(grid, j, i)) continue;
                     OverLapp(grid, j, i);
                     StartCoroutine(ItemMoveDelay(j, i));
-                    _myTransform.anchoredPosition = InGameUiManager.itemBoxGridObjects[j, i].position +
+                    _myTransform.anchoredPosition = GridManager.itemBoxGridObjects[j, i].position +
                                                     (transform.position - _gridTransform.position);
                     itemData.posX = j;
                     itemData.posY = i;

@@ -6,18 +6,9 @@ using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Serialization;
 
-public enum Equipment
-{
-    Bag,
-    Gun,
-    Weapon,
-    Armor,
-    HadGear,
-}
-
 namespace Script.UI
-{
-    public class InGameUiManager : MonoBehaviour
+{ 
+    public class GridManager : MonoBehaviour
     {
         // 이거 ui  출력 싸개로 변경하기!!!
         public GameObject[] inGameUi;
@@ -47,6 +38,7 @@ namespace Script.UI
 
         private void Start()
         {
+            print((int)EquipmentType.Default == 0);
             // items = inGameUi[3].GetComponent<RectTransform>();
             // inventorySizeX = 5;
             // InventoryGrid = new ItemGrid[5, inventorySizeY];

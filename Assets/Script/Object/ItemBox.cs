@@ -14,14 +14,14 @@ namespace Script.Object
         public int boxSizeY;
         private InInventoryItemData[,] _inBoxItemData;
         public bool[,] boxOverlapInfo;
-        private InGameUiManager _inGameUiManager;
+        private GridManager _gridManager;
         
         private bool _isOpen;
         private bool _opened;
 
         private void Start()
         {
-            _inGameUiManager = FindFirstObjectByType<InGameUiManager>();
+            _gridManager = FindFirstObjectByType<GridManager>();
             //_opened = true;
         }
 
@@ -32,7 +32,7 @@ namespace Script.Object
                 return;
             }
             InventoryManager.instance.openedBox = this;
-            _inGameUiManager.CreateBox(boxSizeX, boxSizeY);
+            _gridManager.CreateBox(boxSizeX, boxSizeY);
             if (!_opened)
             {
                 _inBoxItemData = new InInventoryItemData[boxSizeX, boxSizeY];
@@ -40,7 +40,7 @@ namespace Script.Object
                 {
                 }
                 boxOverlapInfo = new bool[boxSizeX, boxSizeY];
-                var obj = ItemDatabaseManager.instance.RootItem(3101, _inGameUiManager.inBoxItemParent);
+                var obj = ItemDatabaseManager.instance.RootItem(3101, _gridManager.inBoxItemParent);
                 _inBoxItemData[obj.itemData.posX, obj.itemData.posY] = obj.itemData;
                 //_inBoxItems.Add(obj.itemData);
                 _opened = true;
@@ -56,21 +56,21 @@ namespace Script.Object
                             continue;
                         }
                         var val = _inBoxItemData[index0, index1];
-                        var obj = ItemDatabaseManager.instance.AddItem(val.data.id, _inGameUiManager.inBoxItemParent);
-                        obj.transform.parent = _inGameUiManager.inBoxItemParent;
+                        var obj = ItemDatabaseManager.instance.AddItem(val.data.id, _gridManager.inBoxItemParent);
+                        obj.transform.parent = _gridManager.inBoxItemParent;
                         obj.IntoItemBox(val.posX, val.posY);
                     }
                 }
                 
             }
-            _inGameUiManager.RootingMenuOn();
+            _gridManager.RootingMenuOn();
             _isOpen = true;
         }
 
         public void RemoveBox()
         {
             _isOpen = false;
-            var items = _inGameUiManager.inBoxItemParent.GetComponentsInChildren<DefaultItem>();
+            var items = _gridManager.inBoxItemParent.GetComponentsInChildren<DefaultItem>();
             
             for (var i = 0; i < items.Length; i++)
             {
@@ -91,7 +91,7 @@ namespace Script.Object
         public void AddToBox(InInventoryItemData item, RectTransform rectTransform)
         {
             _inBoxItemData[item.posX, item.posY] = item;
-            rectTransform.SetParent(_inGameUiManager.inBoxItemParent);
+            rectTransform.SetParent(_gridManager.inBoxItemParent);
         }
         
         public void RemoveFromBox(InInventoryItemData data)

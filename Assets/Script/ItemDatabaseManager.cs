@@ -32,7 +32,7 @@ namespace Script
         // 아이템 오브젝트풀
         private IObjectPool<DefaultItem> _itemPool;
         
-        private InGameUiManager _inGameUiManager;
+        private GridManager _gridManager;
     
         public TextAsset itemData;
         
@@ -41,7 +41,7 @@ namespace Script
 
         private void Awake()
         {
-            _inGameUiManager = FindFirstObjectByType<InGameUiManager>();
+            _gridManager = FindFirstObjectByType<GridManager>();
             instance = this;
             _itemPool = new ObjectPool<DefaultItem>(() => Instantiate(item).GetComponent<DefaultItem>(), 
                 obj =>
@@ -69,6 +69,26 @@ namespace Script
             var obj = _itemPool.Get();
             obj.itemData.data = findItemData[id];
             obj.SetParent(itemParent);
+            var type = (EquipmentType)Math.Truncate((decimal)(obj.itemData.data.id / 1000));
+
+            switch (type)
+            {
+                case EquipmentType.Default:
+                    break;
+                case EquipmentType.Available:
+                    break;
+                case EquipmentType.Gun:
+                    break;
+                case EquipmentType.Weapon:
+                    break;
+                case EquipmentType.Armor:
+                    break;
+                case EquipmentType.HadGear:
+                    break;
+                case EquipmentType.Bag:
+                    break;
+            }
+            
             return obj;
         }
 
@@ -77,7 +97,7 @@ namespace Script
             var obj = _itemPool.Get();
             var rectTransform = obj.gameObject.GetComponent<RectTransform>();
             obj.itemData.data = findItemData[id];
-            obj.InGameUiManager = _inGameUiManager;
+            obj.GridManager = _gridManager;
             obj.isInInventory = false;
             rectTransform.sizeDelta = new Vector2(findItemData[id].itemSizeX, findItemData[id].itemSizeY)*itemSize;
             rectTransform.SetParent(itemParent);

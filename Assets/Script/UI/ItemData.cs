@@ -1,14 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEngine;
-using UnityEngine.Serialization;
+
+public enum EquipmentType
+{
+    Default = 1,
+    Available = 2,
+    Gun = 3,
+    Weapon = 4,
+    Armor = 5,
+    HadGear = 6,
+    Bag = 7
+}
 
 [Serializable]
 public class ItemData
 {
-    [FormerlySerializedAs("itemId")] public int id;
+    public int id;
     public string itemName;
     public int itemPrice;
     public bool stackableItem;
@@ -26,7 +32,7 @@ public class GunData
 }
 
 [Serializable]
-public class CloseRangeWeaponData
+public class WeaponData
 {
     public int damage;
 }
@@ -35,6 +41,13 @@ public class CloseRangeWeaponData
 public class ArmorData
 {
     public float armorPoint;
+}
+
+[Serializable]
+public class BagData
+{
+    public int sizeX;
+    public int sizeY;
 }
 
 [Serializable]

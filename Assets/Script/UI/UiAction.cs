@@ -5,16 +5,16 @@ namespace Script.UI
 {
     public class UiAction : MonoBehaviour
     {
-        private InGameUiManager _inGameUiManager;
+        private GridManager _gridManager;
 
         private void Start()
         {
-            _inGameUiManager = GetComponent<InGameUiManager>();
+            _gridManager = GetComponent<GridManager>();
         }
 
         public void Escape()
         {
-            foreach (var t in _inGameUiManager.inGameUi)
+            foreach (var t in _gridManager.inGameUi)
             {
                 Time.timeScale = 1;
                 t.SetActive(false);
