@@ -35,13 +35,15 @@ namespace Script.Player
         private List<InInventoryItemData> _inInventoryItemList;
 
         // 장비 슬롯
-        public EquipmentSlot<BagData> inventorySizeData;
-
         public EquipmentSlot<GunData> gunData;
 
         public EquipmentSlot<WeaponData> weaponData;
 
         public EquipmentSlot<ArmorData> armorData;
+        
+        public EquipmentSlot<HeadGearData> headGearData;
+
+        public EquipmentSlot<BagData> bagData;
         
         // 인벤토리 그리드
         public bool[,] inventoryOverlapInfo;

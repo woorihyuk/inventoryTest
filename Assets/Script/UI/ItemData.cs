@@ -43,6 +43,11 @@ public class ArmorData
     public float armorPoint;
 }
 
+public struct HeadGearData
+{
+    public float armorPoint;
+}
+
 [Serializable]
 public class BagData
 {

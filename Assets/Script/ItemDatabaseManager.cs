@@ -23,7 +23,7 @@ namespace Script
         public GameObject item;
         
         // id값으로 아이템 관리
-        public Dictionary<int, ItemData> findItemData;
+        private Dictionary<int, ItemData> _findItemData;
         
         // 아이템 데이터
         [SerializeField] public AllData itemDataAsset;
@@ -56,18 +56,18 @@ namespace Script
                 }, Destroy, false, 10000);
             
             itemDataAsset = JsonUtility.FromJson<AllData>(itemData.text);
-            findItemData = new Dictionary<int, ItemData>();
+            _findItemData = new Dictionary<int, ItemData>();
             foreach (var data in itemDataAsset.itemData)
             {
                 //print(data.id);
-                findItemData.Add(data.id, data);
+                _findItemData.Add(data.id, data);
             }
         }
 
         public DefaultItem AddItem(int id, RectTransform itemParent)
         {
             var obj = _itemPool.Get();
-            obj.itemData.data = findItemData[id];
+            obj.itemData.data = _findItemData[id];
             obj.SetParent(itemParent);
             var type = (EquipmentType)Math.Truncate((decimal)(obj.itemData.data.id / 1000));
 
@@ -96,10 +96,10 @@ namespace Script
         {
             var obj = _itemPool.Get();
             var rectTransform = obj.gameObject.GetComponent<RectTransform>();
-            obj.itemData.data = findItemData[id];
+            obj.itemData.data = _findItemData[id];
             obj.GridManager = _gridManager;
             obj.isInInventory = false;
-            rectTransform.sizeDelta = new Vector2(findItemData[id].itemSizeX, findItemData[id].itemSizeY)*itemSize;
+            rectTransform.sizeDelta = new Vector2(_findItemData[id].itemSizeX, _findItemData[id].itemSizeY)*itemSize;
             rectTransform.SetParent(itemParent);
             obj.IntoItemBox();
             
